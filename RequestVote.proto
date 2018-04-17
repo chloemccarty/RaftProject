@@ -1,0 +1,18 @@
+// [START declaration]
+syntax = "proto2";
+package raft;
+
+import "google/protobuf/timestamp.proto";
+// [END declaration]
+
+// [START java_declaration]
+option java_package = "raft";
+option java_outer_classname = "RequestVote";
+// [END java_declaration]
+
+message Candidate {
+    required int32 Term = 1;
+    required int32 CandidateId = 2;
+    required int32 LastLogIndex = 3;
+    required int32 LastLogTerm = 4;
+}
