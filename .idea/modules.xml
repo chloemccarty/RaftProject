@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/Raft.iml" filepath="$PROJECT_DIR$/Raft.iml" />
+      <module fileurl="file://$PROJECT_DIR$/RaftProject.iml" filepath="$PROJECT_DIR$/RaftProject.iml" />
     </modules>
   </component>
 </project>
