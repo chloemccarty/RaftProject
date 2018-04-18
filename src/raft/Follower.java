@@ -24,7 +24,7 @@ public class Follower extends Node {
 
     @Override
     public Node run() {
-        
+        apply();
         return this;
     }
 }

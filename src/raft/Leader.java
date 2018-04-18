@@ -13,6 +13,7 @@ public class Leader extends Node {
 
     @Override
     public Node run() {
+        apply();
         return this;
     }
 }

@@ -15,6 +15,7 @@ public class Candidate extends Node {
 
     @Override
     public Node run() {
+        apply();
         // returns either a leader or a follower, but never another candidate
         return null;
     }

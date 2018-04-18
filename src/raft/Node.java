@@ -44,6 +44,13 @@ public abstract class Node {
     public abstract Node run();
 
     /**
+     * All nodes must apply new logs if commitIndex > lastApplied
+     */
+    public void apply() {
+
+    }
+
+    /**
      * Read IP addresses of nodes from config file.
      */
     public void initConfig() throws IOException {
