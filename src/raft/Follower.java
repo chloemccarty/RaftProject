@@ -7,6 +7,14 @@ public class Follower extends Node {
     // and I imagine we'll use this method in our implementation
     long electionTimer;
 
+    public Follower() {
+        initConfig();
+    };
+
+    public Follower(Node node) {
+        super(node);
+    }
+
     @Override
     public void respondToRequestVote() {
 
