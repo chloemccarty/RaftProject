@@ -1,5 +1,6 @@
 package raft;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public abstract class Node {
@@ -7,8 +8,10 @@ public abstract class Node {
     int term;
     // We might not even need this
     NodeType state;
+    int VotedFor;
     enum NodeType {FOLLOWER, CANDIDATE, LEADER};
     List<LogEntry> log;
+    List<Node> config;
 
     // We might also not even need this
     public static Node NodeFactory(NodeType state) {
@@ -24,10 +27,19 @@ public abstract class Node {
         }
     }
 
-    public Node(List<LogEntry> log) {
-        this.log = log;
+    public Node(Node that) {
+        this.id = that.id;
+        this.term = that.term;
+        this.log = that.log;
+        this.config = that.config;
+        this.VotedFor = that.VotedFor;
     }
 
+    public Node() {
+        this.log = new ArrayList<LogEntry>();
+    }
+
+    // this will also set VotedFor
     public abstract void respondToRequestVote();
 
     /**
@@ -36,5 +48,11 @@ public abstract class Node {
      */
     public abstract Node run();
 
+    /**
+     * Read nodes in from config file
+     */
+    public void initConfig() {
+
+    }
 
 }
