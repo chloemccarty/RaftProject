@@ -4,8 +4,8 @@ import java.util.ArrayList;
 
 public class Candidate extends Node {
 
-    public Candidate() {
-        log = new ArrayList<LogEntry>();
+    public Candidate(Node node) {
+        super(node);
     }
 
     @Override
