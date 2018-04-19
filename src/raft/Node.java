@@ -1,12 +1,40 @@
 package raft;
 
+import java.io.FileReader;
+import java.io.IOException;
+import java.net.InetAddress;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
+import java.nio.file.Path;
+
 public abstract class Node {
     int id;
     int term;
-    NodeType state;
-    enum NodeType {FOLLOWER, CANDIDATE, LEADER};
-    // log
 
+    int votedFor;
+    int commitIndex;
+    int lastApplied;
+    List<LogEntry> log;
+    List<InetAddress> config;
+
+
+    public Node(Node that) {
+        this.id = that.id;
+        this.term = that.term;
+        this.log = that.log;
+        this.config = that.config;
+        this.votedFor = that.votedFor;
+        this.commitIndex = that.commitIndex;
+        this.lastApplied = that.lastApplied;
+    }
+
+    public Node() {
+        this.log = new ArrayList<LogEntry>();
+    }
+
+    // this will also set votedFor
     public abstract void respondToRequestVote();
 
     /**
@@ -15,5 +43,21 @@ public abstract class Node {
      */
     public abstract Node run();
 
+    /**
+     * Read IP addresses of nodes from config file.
+     */
+    public void initConfig() throws IOException {
+        // be sure not to add self to list of nodes to send to
+        InetAddress thisIP = InetAddress.getLocalHost();
+
+        List<String> ips = Files.readAllLines(Paths.get("C:\\repos\\Raft\\Config.txt"));
+        for (String ip : ips) {
+            InetAddress i = InetAddress.getByName(ip);
+            if (thisIP != i) {
+                config.add((i));
+            }
+        }
+
+    }
 
 }
