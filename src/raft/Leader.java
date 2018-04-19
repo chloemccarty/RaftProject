@@ -1,6 +1,11 @@
 package raft;
 
 public class Leader extends Node {
+
+    public Leader(Node node) {
+        super(node);
+    }
+
     @Override
     public void respondToRequestVote() {
 
@@ -8,6 +13,7 @@ public class Leader extends Node {
 
     @Override
     public Node run() {
+        apply();
         return this;
     }
 }

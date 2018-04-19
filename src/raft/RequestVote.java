@@ -15,7 +15,7 @@ public final class RequestVote {
         (com.google.protobuf.ExtensionRegistryLite) registry);
   }
   public interface CandidateOrBuilder extends
-      // @@protoc_insertion_point(interface_extends:raft.Candidate)
+      // @@protoc_insertion_point(interface_extends:raft.RequestVoteMessage)
       com.google.protobuf.MessageOrBuilder {
 
     /**
@@ -55,18 +55,18 @@ public final class RequestVote {
     int getLastLogTerm();
   }
   /**
-   * Protobuf type {@code raft.Candidate}
+   * Protobuf type {@code raft.RequestVoteMessage}
    */
-  public  static final class Candidate extends
+  public  static final class RequestVoteMessage extends
       com.google.protobuf.GeneratedMessageV3 implements
-      // @@protoc_insertion_point(message_implements:raft.Candidate)
+      // @@protoc_insertion_point(message_implements:raft.RequestVoteMessage)
       CandidateOrBuilder {
   private static final long serialVersionUID = 0L;
-    // Use Candidate.newBuilder() to construct.
-    private Candidate(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+    // Use RequestVoteMessage.newBuilder() to construct.
+    private RequestVoteMessage(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
       super(builder);
     }
-    private Candidate() {
+    private RequestVoteMessage() {
       term_ = 0;
       candidateId_ = 0;
       lastLogIndex_ = 0;
@@ -78,7 +78,7 @@ public final class RequestVote {
     getUnknownFields() {
       return this.unknownFields;
     }
-    private Candidate(
+    private RequestVoteMessage(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
@@ -142,7 +142,7 @@ public final class RequestVote {
         internalGetFieldAccessorTable() {
       return raft.RequestVote.internal_static_raft_Candidate_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
-              raft.RequestVote.Candidate.class, raft.RequestVote.Candidate.Builder.class);
+              RequestVoteMessage.class, RequestVoteMessage.Builder.class);
     }
 
     private int bitField0_;
@@ -280,10 +280,10 @@ public final class RequestVote {
       if (obj == this) {
        return true;
       }
-      if (!(obj instanceof raft.RequestVote.Candidate)) {
+      if (!(obj instanceof RequestVoteMessage)) {
         return super.equals(obj);
       }
-      raft.RequestVote.Candidate other = (raft.RequestVote.Candidate) obj;
+      RequestVoteMessage other = (RequestVoteMessage) obj;
 
       boolean result = true;
       result = result && (hasTerm() == other.hasTerm());
@@ -338,69 +338,69 @@ public final class RequestVote {
       return hash;
     }
 
-    public static raft.RequestVote.Candidate parseFrom(
+    public static RequestVoteMessage parseFrom(
         java.nio.ByteBuffer data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static raft.RequestVote.Candidate parseFrom(
+    public static RequestVoteMessage parseFrom(
         java.nio.ByteBuffer data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static raft.RequestVote.Candidate parseFrom(
+    public static RequestVoteMessage parseFrom(
         com.google.protobuf.ByteString data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static raft.RequestVote.Candidate parseFrom(
+    public static RequestVoteMessage parseFrom(
         com.google.protobuf.ByteString data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static raft.RequestVote.Candidate parseFrom(byte[] data)
+    public static RequestVoteMessage parseFrom(byte[] data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static raft.RequestVote.Candidate parseFrom(
+    public static RequestVoteMessage parseFrom(
         byte[] data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static raft.RequestVote.Candidate parseFrom(java.io.InputStream input)
+    public static RequestVoteMessage parseFrom(java.io.InputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
           .parseWithIOException(PARSER, input);
     }
-    public static raft.RequestVote.Candidate parseFrom(
+    public static RequestVoteMessage parseFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
           .parseWithIOException(PARSER, input, extensionRegistry);
     }
-    public static raft.RequestVote.Candidate parseDelimitedFrom(java.io.InputStream input)
+    public static RequestVoteMessage parseDelimitedFrom(java.io.InputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
           .parseDelimitedWithIOException(PARSER, input);
     }
-    public static raft.RequestVote.Candidate parseDelimitedFrom(
+    public static RequestVoteMessage parseDelimitedFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
           .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
     }
-    public static raft.RequestVote.Candidate parseFrom(
+    public static RequestVoteMessage parseFrom(
         com.google.protobuf.CodedInputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
           .parseWithIOException(PARSER, input);
     }
-    public static raft.RequestVote.Candidate parseFrom(
+    public static RequestVoteMessage parseFrom(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
@@ -412,7 +412,7 @@ public final class RequestVote {
     public static Builder newBuilder() {
       return DEFAULT_INSTANCE.toBuilder();
     }
-    public static Builder newBuilder(raft.RequestVote.Candidate prototype) {
+    public static Builder newBuilder(RequestVoteMessage prototype) {
       return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
     }
     public Builder toBuilder() {
@@ -427,11 +427,11 @@ public final class RequestVote {
       return builder;
     }
     /**
-     * Protobuf type {@code raft.Candidate}
+     * Protobuf type {@code raft.RequestVoteMessage}
      */
     public static final class Builder extends
         com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
-        // @@protoc_insertion_point(builder_implements:raft.Candidate)
+        // @@protoc_insertion_point(builder_implements:raft.RequestVoteMessage)
         raft.RequestVote.CandidateOrBuilder {
       public static final com.google.protobuf.Descriptors.Descriptor
           getDescriptor() {
@@ -442,10 +442,10 @@ public final class RequestVote {
           internalGetFieldAccessorTable() {
         return raft.RequestVote.internal_static_raft_Candidate_fieldAccessorTable
             .ensureFieldAccessorsInitialized(
-                raft.RequestVote.Candidate.class, raft.RequestVote.Candidate.Builder.class);
+                RequestVoteMessage.class, RequestVoteMessage.Builder.class);
       }
 
-      // Construct using raft.RequestVote.Candidate.newBuilder()
+      // Construct using raft.RequestVote.RequestVoteMessage.newBuilder()
       private Builder() {
         maybeForceBuilderInitialization();
       }
@@ -478,20 +478,20 @@ public final class RequestVote {
         return raft.RequestVote.internal_static_raft_Candidate_descriptor;
       }
 
-      public raft.RequestVote.Candidate getDefaultInstanceForType() {
-        return raft.RequestVote.Candidate.getDefaultInstance();
+      public RequestVoteMessage getDefaultInstanceForType() {
+        return RequestVoteMessage.getDefaultInstance();
       }
 
-      public raft.RequestVote.Candidate build() {
-        raft.RequestVote.Candidate result = buildPartial();
+      public RequestVoteMessage build() {
+        RequestVoteMessage result = buildPartial();
         if (!result.isInitialized()) {
           throw newUninitializedMessageException(result);
         }
         return result;
       }
 
-      public raft.RequestVote.Candidate buildPartial() {
-        raft.RequestVote.Candidate result = new raft.RequestVote.Candidate(this);
+      public RequestVoteMessage buildPartial() {
+        RequestVoteMessage result = new RequestVoteMessage(this);
         int from_bitField0_ = bitField0_;
         int to_bitField0_ = 0;
         if (((from_bitField0_ & 0x00000001) == 0x00000001)) {
@@ -542,16 +542,16 @@ public final class RequestVote {
         return (Builder) super.addRepeatedField(field, value);
       }
       public Builder mergeFrom(com.google.protobuf.Message other) {
-        if (other instanceof raft.RequestVote.Candidate) {
-          return mergeFrom((raft.RequestVote.Candidate)other);
+        if (other instanceof RequestVoteMessage) {
+          return mergeFrom((RequestVoteMessage)other);
         } else {
           super.mergeFrom(other);
           return this;
         }
       }
 
-      public Builder mergeFrom(raft.RequestVote.Candidate other) {
-        if (other == raft.RequestVote.Candidate.getDefaultInstance()) return this;
+      public Builder mergeFrom(RequestVoteMessage other) {
+        if (other == RequestVoteMessage.getDefaultInstance()) return this;
         if (other.hasTerm()) {
           setTerm(other.getTerm());
         }
@@ -589,11 +589,11 @@ public final class RequestVote {
           com.google.protobuf.CodedInputStream input,
           com.google.protobuf.ExtensionRegistryLite extensionRegistry)
           throws java.io.IOException {
-        raft.RequestVote.Candidate parsedMessage = null;
+        RequestVoteMessage parsedMessage = null;
         try {
           parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
         } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-          parsedMessage = (raft.RequestVote.Candidate) e.getUnfinishedMessage();
+          parsedMessage = (RequestVoteMessage) e.getUnfinishedMessage();
           throw e.unwrapIOException();
         } finally {
           if (parsedMessage != null) {
@@ -742,39 +742,39 @@ public final class RequestVote {
       }
 
 
-      // @@protoc_insertion_point(builder_scope:raft.Candidate)
+      // @@protoc_insertion_point(builder_scope:raft.RequestVoteMessage)
     }
 
-    // @@protoc_insertion_point(class_scope:raft.Candidate)
-    private static final raft.RequestVote.Candidate DEFAULT_INSTANCE;
+    // @@protoc_insertion_point(class_scope:raft.RequestVoteMessage)
+    private static final RequestVoteMessage DEFAULT_INSTANCE;
     static {
-      DEFAULT_INSTANCE = new raft.RequestVote.Candidate();
+      DEFAULT_INSTANCE = new RequestVoteMessage();
     }
 
-    public static raft.RequestVote.Candidate getDefaultInstance() {
+    public static RequestVoteMessage getDefaultInstance() {
       return DEFAULT_INSTANCE;
     }
 
-    @java.lang.Deprecated public static final com.google.protobuf.Parser<Candidate>
-        PARSER = new com.google.protobuf.AbstractParser<Candidate>() {
-      public Candidate parsePartialFrom(
+    @java.lang.Deprecated public static final com.google.protobuf.Parser<RequestVoteMessage>
+        PARSER = new com.google.protobuf.AbstractParser<RequestVoteMessage>() {
+      public RequestVoteMessage parsePartialFrom(
           com.google.protobuf.CodedInputStream input,
           com.google.protobuf.ExtensionRegistryLite extensionRegistry)
           throws com.google.protobuf.InvalidProtocolBufferException {
-          return new Candidate(input, extensionRegistry);
+          return new RequestVoteMessage(input, extensionRegistry);
       }
     };
 
-    public static com.google.protobuf.Parser<Candidate> parser() {
+    public static com.google.protobuf.Parser<RequestVoteMessage> parser() {
       return PARSER;
     }
 
     @java.lang.Override
-    public com.google.protobuf.Parser<Candidate> getParserForType() {
+    public com.google.protobuf.Parser<RequestVoteMessage> getParserForType() {
       return PARSER;
     }
 
-    public raft.RequestVote.Candidate getDefaultInstanceForType() {
+    public RequestVoteMessage getDefaultInstanceForType() {
       return DEFAULT_INSTANCE;
     }
 
@@ -795,7 +795,7 @@ public final class RequestVote {
   static {
     java.lang.String[] descriptorData = {
       "\n\021RequestVote.proto\022\004raft\032\037google/protob" +
-      "uf/timestamp.proto\"Y\n\tCandidate\022\014\n\004Term\030" +
+      "uf/timestamp.proto\"Y\n\tRequestVoteMessage\022\014\n\004Term\030" +
       "\001 \002(\005\022\023\n\013CandidateId\030\002 \002(\005\022\024\n\014LastLogInd" +
       "ex\030\003 \002(\005\022\023\n\013LastLogTerm\030\004 \002(\005B\023\n\004raftB\013R" +
       "equestVote"
