@@ -10,6 +10,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.nio.file.Path;
+import java.util.Queue;
 
 public abstract class Node {
     int id;
@@ -23,6 +24,8 @@ public abstract class Node {
     final int PORT = 6666;
 
 
+
+
     public Node(Node that) {
         this.id = that.id;
         this.term = that.term;
@@ -31,6 +34,7 @@ public abstract class Node {
         this.votedFor = that.votedFor;
         this.commitIndex = that.commitIndex;
         this.lastApplied = that.lastApplied;
+
     }
 
     public Node() {
@@ -59,11 +63,13 @@ public abstract class Node {
     public void initConfig() throws IOException {
 
         // TODO have a loop that continually accepts requests to this socket
+
         ServerSocket server = new ServerSocket(PORT);
 
         // be sure not to add self to list of nodes to send to
         InetAddress thisIP = InetAddress.getLocalHost();
-
+// TODO don't have a socket that you keep around
+        // self contained send message
         List<String> ips = Files.readAllLines(Paths.get("C:\\repos\\Raft\\Config.txt"));
         for (String ip : ips) {
             InetAddress i = InetAddress.getByName(ip);
