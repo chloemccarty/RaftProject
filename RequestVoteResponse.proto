@@ -7,7 +7,7 @@ import "google/protobuf/timestamp.proto";
 
 // [START java_declaration]
 option java_package = "raft";
-option java_outer_classname = "RequestVote";
+option java_outer_classname = "RequestVoteRespo";
 // [END java_declaration]
 
 
