@@ -16,7 +16,7 @@ public class NodeRunner {
         // will a synchronous queue keep things from getting messed up with all the threading?
 
         // create a listener that will listen and "dispatch" messages
-        Network.listen();
+        Listener listener = Network.listen();
 
         // initialize the node (all nodes are followers when first initialized)
         Node node = new Follower();

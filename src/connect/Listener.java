@@ -1,5 +1,8 @@
 package connect;
 
+import raft.Message;
+import raft.NodeRunner;
+
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.net.ServerSocket;
@@ -11,21 +14,20 @@ public class Listener extends Thread {
     public class Handler extends Thread {
 
         public Handler(Socket socket) throws IOException {
-            // TODO: deserialize messages and put them in the queue
             DataInputStream in = new DataInputStream(socket.getInputStream());
             // read in message... they should be self describing
             byte msgType = in.readByte();
             if (msgType == 1) {
-                // add Message to queue
+                NodeRunner.messageQueue.add(new Message(Message.MessageType.APPEND_ENTRIES));
             }
             else if (msgType == 2) {
-                // add Message to queue
+                NodeRunner.messageQueue.add(new Message(Message.MessageType.APPEND_ENTRIES_RESPONSE));
             }
             else if (msgType == 3) {
-                // add Message to queue
+                NodeRunner.messageQueue.add(new Message(Message.MessageType.REQUEST_VOTES));
             }
             else if (msgType == 4) {
-                // add Message to queue
+                NodeRunner.messageQueue.add(new Message(Message.MessageType.REQUEST_VOTES_RESPONSE));
             }
 
         }
