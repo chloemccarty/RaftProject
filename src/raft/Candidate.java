@@ -22,7 +22,7 @@ public class Candidate extends Node {
 
     @Override
     public Node run() throws IOException {
-        apply();
+       apply();
 
         boolean leader = startElection();
         if (leader) {
