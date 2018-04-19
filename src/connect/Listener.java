@@ -2,6 +2,8 @@ package connect;
 
 import raft.Message;
 import raft.NodeRunner;
+import raft.RequestVote;
+import raft.RequestVoteRespo;
 
 import java.io.DataInputStream;
 import java.io.IOException;
@@ -17,17 +19,23 @@ public class Listener extends Thread {
             DataInputStream in = new DataInputStream(socket.getInputStream());
             // read in message... they should be self describing
             byte msgType = in.readByte();
-            if (msgType == 1) {
-                NodeRunner.messageQueue.add(new Message(Message.MessageType.APPEND_ENTRIES));
+            if (msgType == 0) {
+                // TODO appendEntries protobuf
+
+                NodeRunner.messageQueue.add(new Message(Message.MessageType.APPEND_ENTRIES, null));
+            }
+            else if (msgType == 1) {
+                NodeRunner.messageQueue.add(new Message(Message.MessageType.APPEND_ENTRIES_RESPONSE, null));
             }
             else if (msgType == 2) {
-                NodeRunner.messageQueue.add(new Message(Message.MessageType.APPEND_ENTRIES_RESPONSE));
+                // TODO read in RequestVotes object from in
+                RequestVote.RequestVoteMessage rv = RequestVote.RequestVoteMessage.parseFrom(in);
+                NodeRunner.messageQueue.add(new Message(Message.MessageType.REQUEST_VOTES, rv));
             }
             else if (msgType == 3) {
-                NodeRunner.messageQueue.add(new Message(Message.MessageType.REQUEST_VOTES));
-            }
-            else if (msgType == 4) {
-                NodeRunner.messageQueue.add(new Message(Message.MessageType.REQUEST_VOTES_RESPONSE));
+                // TODO read in RequestVotesResponse object from in
+                RequestVoteRespo.RequestVoteResponse rvr = RequestVoteRespo.RequestVoteResponse.parseFrom(in);
+                NodeRunner.messageQueue.add(new Message(Message.MessageType.REQUEST_VOTES_RESPONSE, rvr));
             }
 
         }

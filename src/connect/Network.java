@@ -7,7 +7,7 @@ public class Network {
     }
 
     public static void send(int type, byte[] data, String IP) {
-
+        new Sender((byte) type, data, IP);
     }
 
 }
