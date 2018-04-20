@@ -1,5 +1,7 @@
 package raft;
 
+import com.google.protobuf.GeneratedMessageV3;
+
 import java.io.FileReader;
 import java.io.IOException;
 import java.net.InetAddress;
@@ -10,6 +12,9 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.nio.file.Path;
+import java.util.Queue;
+
+import static raft.NodeRunner.messageQueue;
 
 public abstract class Node {
     int id;
@@ -19,7 +24,7 @@ public abstract class Node {
     int commitIndex;
     int lastApplied;
     List<LogEntry> log;
-    List<Socket> config;
+    List<String> config;
     final int PORT = 6666;
 
 
@@ -31,6 +36,7 @@ public abstract class Node {
         this.votedFor = that.votedFor;
         this.commitIndex = that.commitIndex;
         this.lastApplied = that.lastApplied;
+
     }
 
     public Node() {
@@ -39,6 +45,18 @@ public abstract class Node {
 
     // this will also set votedFor
     public abstract void respondToRequestVote();
+
+    public Message checkForInput() {
+        // check for input
+        if (!messageQueue.isEmpty()) {
+            // pull a message out
+            return messageQueue.poll();
+        }
+        return null;
+    }
+
+    public abstract void handleMessage(Message message);
+
 
     /**
      *
@@ -59,16 +77,17 @@ public abstract class Node {
     public void initConfig() throws IOException {
 
         // TODO have a loop that continually accepts requests to this socket
+
         ServerSocket server = new ServerSocket(PORT);
 
         // be sure not to add self to list of nodes to send to
-        InetAddress thisIP = InetAddress.getLocalHost();
-
+        String thisIP = InetAddress.getLocalHost().toString();
+// TODO don't have a socket that you keep around
+        // self contained send message
         List<String> ips = Files.readAllLines(Paths.get("C:\\repos\\Raft\\Config.txt"));
         for (String ip : ips) {
-            InetAddress i = InetAddress.getByName(ip);
-            if (thisIP != i) {
-                config.add(new Socket(i, PORT));
+            if (thisIP != ip) {
+                config.add(ip);
             }
 
         }

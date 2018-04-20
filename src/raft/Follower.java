@@ -7,7 +7,7 @@ public class Follower extends Node {
     // the type of this will depend on how we implement time keeping
     // i decided to make it a long since System.currentTimeMillis() returns a long
     // and I imagine we'll use this method in our implementation
-    long electionTimer;
+    long electionTimout;
 
     public Follower() throws IOException {
         initConfig();
@@ -19,6 +19,11 @@ public class Follower extends Node {
 
     @Override
     public void respondToRequestVote() {
+
+    }
+
+    @Override
+    public void handleMessage(Message message) {
 
     }
 
