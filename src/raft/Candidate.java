@@ -20,39 +20,6 @@ public class Candidate extends Node {
     }
 
     @Override
-    public void respondToRequestVote() {
-        // TODO implement Candidate voting logic
-    }
-
-    /**
-     * manipulates instance data that run() uses to determine if we won the election or not
-     * I'm not a huge fan of this organization, so we can change it later, but it's just kind of what I did
-     * @param message
-     */
-    @Override
-    public void handleMessage(Message message) {
-        // if term number is greater, immediately relinquish leadership
-
-        if (message.type == Message.MessageType.APPEND_ENTRIES) {
-            // TODO (later)
-            // if we received valid append_Entries, forfeit candidacy
-            forfeit = true;
-        }
-        else if (message.type == Message.MessageType.APPEND_ENTRIES_RESPONSE) {
-            // TODO (later)
-        }
-        else if (message.type == Message.MessageType.REQUEST_VOTES) {
-            respondToRequestVote();
-        }
-        if (message.type == Message.MessageType.REQUEST_VOTES_RESPONSE) {
-            RequestVoteRespo.RequestVoteResponse r = (RequestVoteRespo.RequestVoteResponse)message.message;
-            if (r.getVoteGranted())
-                votesReceived++;
-        }
-        // might make a call to send response, or maybe we'll do that below
-    }
-
-    @Override
     public Node run() throws IOException {
         apply();
         startElection();
@@ -77,10 +44,11 @@ public class Candidate extends Node {
         }
     }
 
-    // send out RequestVote RPCs to all other nodes
+    /**
+     *  send out RequestVote RPCs to all other nodes
+     * @throws IOException
+     */
     private void startElection() throws IOException {
-        // build message
-
         term++;
         votesReceived = 1;
 
@@ -97,10 +65,43 @@ public class Candidate extends Node {
         for (String ip : config) {
             Network.send(REQUEST_VOTES, rvm, ip);
         }
-        
-
     }
 
+    /**
+     * manipulates instance data that run() uses to determine if we won the election or not
+     * I'm not a huge fan of this organization, so we can change it later, but it's just kind of what I did
+     * @param message
+     */
+    @Override
+    public void handleMessage(Message message) {
+        if (message.type == Message.MessageType.APPEND_ENTRIES) {
+            // TODO (later)
+            // if we received valid append_Entries, forfeit candidacy
+            forfeit = true;
+        }
+        else if (message.type == Message.MessageType.APPEND_ENTRIES_RESPONSE) {
+            // TODO (later)
+        }
+        else if (message.type == Message.MessageType.REQUEST_VOTES) {
+            respondToRequestVote();
+        }
+        if (message.type == Message.MessageType.REQUEST_VOTES_RESPONSE) {
+            RequestVoteRespo.RequestVoteResponse r = (RequestVoteRespo.RequestVoteResponse)message.message;
+            if (r.getVoteGranted())
+                votesReceived++;
+        }
+        // might make a call to send() to respond to some of these as we implement them more
+    }
+
+    @Override
+    public void respondToRequestVote() {
+        // TODO implement Candidate voting logic
+    }
+
+    /**
+     * Tests whether the election has timed out or not
+     * @return true if the electionTimeout is expired
+     */
     private boolean timerExpired() {
 
         if (System.currentTimeMillis() - electionStarted > electionTimeout) {
@@ -108,5 +109,7 @@ public class Candidate extends Node {
         }
         return false;
     }
+
+
 
 }
