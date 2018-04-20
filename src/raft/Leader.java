@@ -1,9 +1,5 @@
 package raft;
 
-import com.google.protobuf.GeneratedMessageV3;
-
-import static raft.NodeRunner.messageQueue;
-
 public class Leader extends Node {
 
     public Leader(Node node) {
@@ -16,7 +12,7 @@ public class Leader extends Node {
     }
 
     @Override
-    public void HandleMessage(Message message) {
+    public void handleMessage(Message message) {
         // if term number is greater, immediately relinquish leadership
 
         if (message.type == Message.MessageType.APPEND_ENTRIES) {
@@ -41,8 +37,8 @@ public class Leader extends Node {
         // check messages
         // react to messages
         // send response
-        Message m = getMessageFromQueue();
-        HandleMessage(m);
+        Message m = checkForInput();
+        handleMessage(m);
 
 
         return this;

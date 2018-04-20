@@ -46,7 +46,7 @@ public abstract class Node {
     // this will also set votedFor
     public abstract void respondToRequestVote();
 
-    public Message getMessageFromQueue() {
+    public Message checkForInput() {
         // check for input
         if (!messageQueue.isEmpty()) {
             // pull a message out
@@ -55,7 +55,7 @@ public abstract class Node {
         return null;
     }
 
-    public abstract void HandleMessage(Message message);
+    public abstract void handleMessage(Message message);
 
 
     /**

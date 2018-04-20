@@ -2,72 +2,87 @@ package raft;
 
 import connect.Network;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
 import java.io.IOException;
-import java.net.Socket;
 
 import static raft.Message.MessageType.REQUEST_VOTES;
 
 public class Candidate extends Node {
-    long electionTimer;
+    long electionStarted;
+    long electionTimeout;
+    int votesReceived;
+    boolean forfeit;
 
     public Candidate(Node node) {
         super(node);
+        electionStarted = System.currentTimeMillis();
+        // this will need to be configured to be in a nicer range probably
+        electionTimeout = (long) (Math.random() + 1) * 200 + 300;
     }
-
-
-
 
     @Override
     public void respondToRequestVote() {
-
+        // TODO implement Candidate voting logic
     }
 
+    /**
+     * manipulates instance data that run() uses to determine if we won the election or not
+     * I'm not a huge fan of this organization, so we can change it later, but it's just kind of what I did
+     * @param message
+     */
     @Override
-    public void HandleMessage(Message message) {
+    public void handleMessage(Message message) {
         // if term number is greater, immediately relinquish leadership
 
         if (message.type == Message.MessageType.APPEND_ENTRIES) {
-            // TODO
+            // TODO (later)
+            // if we received valid append_Entries, forfeit candidacy
+            forfeit = true;
         }
         else if (message.type == Message.MessageType.APPEND_ENTRIES_RESPONSE) {
-            // TODO
+            // TODO (later)
         }
         else if (message.type == Message.MessageType.REQUEST_VOTES) {
-            // TODO implement Leader voting logic
             respondToRequestVote();
         }
         if (message.type == Message.MessageType.REQUEST_VOTES_RESPONSE) {
-            // shouldn't even get this message. We shouldn't have sent out a ReQuestVotes as a leader
+            RequestVoteRespo.RequestVoteResponse r = (RequestVoteRespo.RequestVoteResponse)message.message;
+            if (r.getVoteGranted())
+                votesReceived++;
         }
-        // will make a call to send response
+        // might make a call to send response, or maybe we'll do that below
     }
 
     @Override
     public Node run() throws IOException {
-       apply();
+        apply();
+        startElection();
 
-        boolean leader = startElection();
-        if (leader) {
-            // return a leader Node
-            return new Leader(this);
-        }
-        else {
-            // if we received a heartbeat, there's a new leader
-            // return follower
-            // otherwise, no leader was elected, return a new candidate
-        }
+        while (true) {
+            Message msg = checkForInput();
+            handleMessage(msg);
 
-        // returns either a leader or a follower
-        return null;
+            if (votesReceived > (numNodes + 1) / 2) {
+                // return a leader Node
+                return new Leader(this);
+            }
+            else if (forfeit) {
+                // if we received a heartbeat, there's a new leader
+                return new Follower(this);
+            }
+            else if (timerExpired()){
+                // no leader was elected, return a new candidate
+                return new Candidate(this);
+            }
+            // else just keep running until one of these happens
+        }
     }
 
     // send out RequestVote RPCs to all other nodes
-    private boolean startElection() throws IOException {
+    private void startElection() throws IOException {
         // build message
+
         term++;
-        int votes = 1;
+        votesReceived = 1;
 
         RequestVote.RequestVoteMessage.Builder builder = RequestVote.RequestVoteMessage.newBuilder();
         builder.setCandidateId(this.id);
@@ -82,11 +97,16 @@ public class Candidate extends Node {
         for (String ip : config) {
             Network.send(REQUEST_VOTES, rvm, ip);
         }
+        
 
-        // TODO add an Message object which extends thread. Instantiate one for each node in the configuration
-        // it will send out the node and also listen for a response and return.
-
-
-        return votes >= (numNodes + 1) / 2;
     }
+
+    private boolean timerExpired() {
+
+        if (System.currentTimeMillis() - electionStarted > electionTimeout) {
+            return true;
+        }
+        return false;
+    }
+
 }
