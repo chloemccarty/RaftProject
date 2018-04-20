@@ -1,9 +1,13 @@
 package raft;
 
+import connect.Network;
+
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
+
+import static raft.Message.MessageType.REQUEST_VOTES;
 
 public class Candidate extends Node {
     long electionTimer;
@@ -18,6 +22,26 @@ public class Candidate extends Node {
     @Override
     public void respondToRequestVote() {
 
+    }
+
+    @Override
+    public void HandleMessage(Message message) {
+        // if term number is greater, immediately relinquish leadership
+
+        if (message.type == Message.MessageType.APPEND_ENTRIES) {
+            // TODO
+        }
+        else if (message.type == Message.MessageType.APPEND_ENTRIES_RESPONSE) {
+            // TODO
+        }
+        else if (message.type == Message.MessageType.REQUEST_VOTES) {
+            // TODO implement Leader voting logic
+            respondToRequestVote();
+        }
+        if (message.type == Message.MessageType.REQUEST_VOTES_RESPONSE) {
+            // shouldn't even get this message. We shouldn't have sent out a ReQuestVotes as a leader
+        }
+        // will make a call to send response
     }
 
     @Override
@@ -55,11 +79,8 @@ public class Candidate extends Node {
         // builder.setLastLogTerm();
 
         // send to each socket
-        for (Socket socket : config) {
-            DataInputStream in = new DataInputStream(socket.getInputStream());
-
-            DataOutputStream out = new DataOutputStream(socket.getOutputStream());
-            rvm.writeDelimitedTo(out);
+        for (String ip : config) {
+            Network.send(REQUEST_VOTES, rvm, ip);
         }
 
         // TODO add an Message object which extends thread. Instantiate one for each node in the configuration

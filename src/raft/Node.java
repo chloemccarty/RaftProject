@@ -1,5 +1,7 @@
 package raft;
 
+import com.google.protobuf.GeneratedMessageV3;
+
 import java.io.FileReader;
 import java.io.IOException;
 import java.net.InetAddress;
@@ -11,6 +13,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.nio.file.Path;
 import java.util.Queue;
+
+import static raft.NodeRunner.messageQueue;
 
 public abstract class Node {
     int id;
@@ -41,6 +45,18 @@ public abstract class Node {
 
     // this will also set votedFor
     public abstract void respondToRequestVote();
+
+    public Message getMessageFromQueue() {
+        // check for input
+        if (!messageQueue.isEmpty()) {
+            // pull a message out
+            return messageQueue.poll();
+        }
+        return null;
+    }
+
+    public abstract void HandleMessage(Message message);
+
 
     /**
      *
