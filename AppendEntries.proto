@@ -25,3 +25,8 @@ message AppendEntriesMessage {
         optional string message = 2;
     }
 }
+
+message Response {
+    optional int32 currentTerm = 1;
+    optional bool success = 2;
+}
