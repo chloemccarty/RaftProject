@@ -51,6 +51,7 @@ public class Candidate extends Node {
     private void startElection() throws IOException {
         term++;
         votesReceived = 1;
+        votedFor = id;
 
         RequestVote.RequestVoteMessage.Builder builder = RequestVote.RequestVoteMessage.newBuilder();
         builder.setCandidateId(this.id);
@@ -89,6 +90,7 @@ public class Candidate extends Node {
             RequestVoteRespo.RequestVoteResponse r = (RequestVoteRespo.RequestVoteResponse)message.message;
             if (r.getVoteGranted())
                 votesReceived++;
+            electionStarted = System.currentTimeMillis();
         }
         // might make a call to send() to respond to some of these as we implement them more
     }
