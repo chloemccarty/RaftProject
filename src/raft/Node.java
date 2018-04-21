@@ -75,24 +75,23 @@ public abstract class Node {
      * Read IP addresses of nodes from config file.
      */
     public void initConfig() throws IOException {
-
         // TODO have a loop that continually accepts requests to this socket
 
         ServerSocket server = new ServerSocket(PORT);
 
         // be sure not to add self to list of nodes to send to
-        String thisIP = InetAddress.getLocalHost().toString();
-// TODO don't have a socket that you keep around
+        String thisIP = InetAddress.getLocalHost().getHostAddress();
+        // TODO don't have a socket that you keep around
         // self contained send message
-        List<String> ips = Files.readAllLines(Paths.get("C:\\repos\\Raft\\Config.txt"));
+
+        // List<String> ips = Files.readAllLines(Paths.get("C:\\repos\\Raft\\Config.txt"));
+        List<String> ips = Files.readAllLines(Paths.get("/Users/enavarro/IdeaProjects/exn001/RaftProject/Config.txt"));
+        config = new ArrayList<>();
         for (String ip : ips) {
             if (thisIP != ip) {
                 config.add(ip);
             }
-
         }
         numNodes = ips.size();
     }
-
-
 }

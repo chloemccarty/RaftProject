@@ -1,6 +1,9 @@
 package raft;
 
+import connect.Network;
+
 import java.io.IOException;
+import static raft.Message.MessageType.REQUEST_VOTES_RESPONSE;
 
 public class Follower extends Node {
 
@@ -39,11 +42,22 @@ public class Follower extends Node {
             // it would need the message as a parameter or else we could not
             // get information from the message in the method
             // respondToRequestVote();
-            RequestVote.RequestVoteMessage r = (RequestVote.RequestVoteMessage)message.message;
-            if (votedFor == 0)
-                votedFor = r.getCandidateId();
-            // else?
+
+            RequestVote.RequestVoteMessage rv = (RequestVote.RequestVoteMessage) message.message;
+            // TODO check to see if candidate's log is at least as up-to-date
+            // as our own
+            if (this.votedFor == 0){
+                this.votedFor = rv.getCandidateId();
+                RequestVoteRespo.RequestVoteResponse.Builder builder = RequestVoteRespo.RequestVoteResponse.newBuilder();
+                builder.setVoteGranted(true);
+                RequestVoteRespo.RequestVoteResponse rvr = builder.build();
+                // we need the sender's ip address
+                String candidateIp = "";
+                Network.send(REQUEST_VOTES_RESPONSE, rvr, candidateIp);
+            }
+
         } else if (message.type == Message.MessageType.REQUEST_VOTES_RESPONSE) {
+            // would followers even get this message if they don't send RequestVote RPCs?
             RequestVoteRespo.RequestVoteResponse r = (RequestVoteRespo.RequestVoteResponse)message.message;
         }
     }
