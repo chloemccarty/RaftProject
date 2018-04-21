@@ -35,9 +35,16 @@ public class Follower extends Node {
         } else if (message.type == Message.MessageType.APPEND_ENTRIES_RESPONSE) {
             // TODO (later)
         } else if (message.type == Message.MessageType.REQUEST_VOTES) {
-            respondToRequestVote();
+            // TODO not sure if this method is needed and if it is
+            // it would need the message as a parameter or else we could not
+            // get information from the message in the method
+            // respondToRequestVote();
+            RequestVote.RequestVoteMessage r = (RequestVote.RequestVoteMessage)message.message;
+            if (votedFor == 0)
+                votedFor = r.getCandidateId();
+            // else?
         } else if (message.type == Message.MessageType.REQUEST_VOTES_RESPONSE) {
-
+            RequestVoteRespo.RequestVoteResponse r = (RequestVoteRespo.RequestVoteResponse)message.message;
         }
     }
 
