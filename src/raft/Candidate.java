@@ -109,7 +109,4 @@ public class Candidate extends Node {
         }
         return false;
     }
-
-
-
 }

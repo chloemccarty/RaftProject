@@ -26,6 +26,7 @@ public class Sender extends Thread {
             Socket socket = new Socket(ip, PORT);
             DataOutputStream out = new DataOutputStream(socket.getOutputStream());
             out.writeByte(type);
+            // send length of data
             data.writeTo(out);
             socket.close();
         } catch (IOException e) {

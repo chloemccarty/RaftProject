@@ -19,6 +19,7 @@ public class Listener extends Thread {
             DataInputStream in = new DataInputStream(socket.getInputStream());
             // read in message... they should be self describing
             byte msgType = in.readByte();
+
             if (msgType == 0) {
                 // TODO appendEntries protobuf
 

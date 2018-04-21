@@ -10,6 +10,7 @@ public class Message {
 
     public Message(MessageType type, GeneratedMessageV3 message) {
         this.type = type;
+        this.message = message;
         //RequestVote.RequestVoteMessage rv = RequestVote.RequestVoteMessage.parseFrom(in);
     }
 }
