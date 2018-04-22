@@ -41,19 +41,19 @@ public class Follower extends Node {
             // TODO not sure if this method is needed and if it is
             // it would need the message as a parameter or else we could not
             // get information from the message in the method
-            // respondToRequestVote();
+            // TODO respondToRequestVote();
 
             RequestVote.RequestVoteMessage rv = (RequestVote.RequestVoteMessage) message.message;
             // TODO check to see if candidate's log is at least as up-to-date
-            // as our own
+            // as our own (later)
             if (this.votedFor == 0){
                 this.votedFor = rv.getCandidateId();
                 RequestVoteRespo.RequestVoteResponse.Builder builder = RequestVoteRespo.RequestVoteResponse.newBuilder();
                 builder.setVoteGranted(true);
                 RequestVoteRespo.RequestVoteResponse rvr = builder.build();
                 // we need the sender's ip address
-                String candidateIp = "";
-                Network.send(REQUEST_VOTES_RESPONSE, rvr, candidateIp);
+//                String candidateIp = "";
+//                Network.send(REQUEST_VOTES_RESPONSE, rvr, candidateIp);
             }
 
         } else if (message.type == Message.MessageType.REQUEST_VOTES_RESPONSE) {
