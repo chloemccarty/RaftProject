@@ -44,6 +44,7 @@ public abstract class Node {
     }
 
     // this will also set votedFor
+    // maybe this needs to include the message as a parameter?
     public abstract void respondToRequestVote();
 
     public Message checkForInput() {

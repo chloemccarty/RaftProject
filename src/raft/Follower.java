@@ -3,6 +3,7 @@ package raft;
 import connect.Network;
 
 import java.io.IOException;
+
 import static raft.Message.MessageType.REQUEST_VOTES_RESPONSE;
 
 public class Follower extends Node {
@@ -46,19 +47,21 @@ public class Follower extends Node {
             RequestVote.RequestVoteMessage rv = (RequestVote.RequestVoteMessage) message.message;
             // TODO check to see if candidate's log is at least as up-to-date
             // as our own (later)
-            if (this.votedFor == 0){
+
+            // we have not voted for anyone, vote for this candidate
+            if (this.votedFor == 0) {
                 this.votedFor = rv.getCandidateId();
                 RequestVoteRespo.RequestVoteResponse.Builder builder = RequestVoteRespo.RequestVoteResponse.newBuilder();
                 builder.setVoteGranted(true);
                 RequestVoteRespo.RequestVoteResponse rvr = builder.build();
-                // we need the sender's ip address
-//                String candidateIp = "";
-//                Network.send(REQUEST_VOTES_RESPONSE, rvr, candidateIp);
-            }
 
+                // we need the candidate's ip address
+                String candidateIp = "";
+                Network.send(REQUEST_VOTES_RESPONSE, rvr, candidateIp);
+            }
         } else if (message.type == Message.MessageType.REQUEST_VOTES_RESPONSE) {
             // would followers even get this message if they don't send RequestVote RPCs?
-            RequestVoteRespo.RequestVoteResponse r = (RequestVoteRespo.RequestVoteResponse)message.message;
+            RequestVoteRespo.RequestVoteResponse r = (RequestVoteRespo.RequestVoteResponse) message.message;
         }
     }
 
@@ -74,10 +77,12 @@ public class Follower extends Node {
             if (message != null) {
                 handleMessage(message);
 
-                // reset timer because we received a message
+                // reset timer because we received an AppendEntries or a RequestVote
                 startTime = System.currentTimeMillis();
             }
 
+            // no AppendEntries or RequestVotes received and timeout occurred,
+            // convert to candidate
             if (timerExpired()) {
                 return new Candidate(this);
             }
@@ -87,6 +92,7 @@ public class Follower extends Node {
 
     /**
      * Tests whether the election has timed out or not
+     *
      * @return true if the electionTimeout is expired
      */
     private boolean timerExpired() {
