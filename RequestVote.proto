@@ -10,7 +10,7 @@ option java_package = "raft";
 option java_outer_classname = "RequestVote";
 // [END java_declaration]
 
-message Candidate {
+message RequestVoteMessage {
     required int32 Term = 1;
     required int32 CandidateId = 2;
     required int32 LastLogIndex = 3;

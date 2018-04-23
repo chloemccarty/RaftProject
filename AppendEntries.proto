@@ -1,0 +1,32 @@
+// [START declaration]
+syntax = "proto2";
+package raft;
+
+import "google/protobuf/timestamp.proto";
+// [END declaration]
+
+// [START java_declaration]
+option java_package = "raft";
+option java_outer_classname = "AppendEntries";
+// [END java_declaration]
+
+
+
+message AppendEntriesMessage {
+    required int32 term = 1;
+    required int32 leaderId = 2;
+    required int32 prevLogIndex = 3;
+    required int32 prevLogTerm = 4;
+    required int32 leaderCommit = 5;
+    repeated Entry entries = 6;
+
+    message Entry {
+        optional int32 termNumber = 1;
+        optional string message = 2;
+    }
+}
+
+message Response {
+    optional int32 term = 1;
+    optional bool success = 2;
+}

@@ -51,15 +51,15 @@ public class Candidate extends Node {
     private void startElection() throws IOException {
         term++;
         votesReceived = 1;
+        votedFor = id;
 
         RequestVote.RequestVoteMessage.Builder builder = RequestVote.RequestVoteMessage.newBuilder();
         builder.setCandidateId(this.id);
         builder.setTerm(this.term);
-        RequestVote.RequestVoteMessage rvm = builder.build();
-
         // TODO implement with AppendEntries Stuff
-        // builder.setLastLogIndex();
-        // builder.setLastLogTerm();
+        builder.setLastLogIndex(-1);
+        builder.setLastLogTerm(-1);
+        RequestVote.RequestVoteMessage rvm = builder.build();
 
         // send to each socket
         for (String ip : config) {
@@ -74,6 +74,8 @@ public class Candidate extends Node {
      */
     @Override
     public void handleMessage(Message message) {
+        if (message == null)
+            return;
         if (message.type == Message.MessageType.APPEND_ENTRIES) {
             // TODO (later)
             // if we received valid append_Entries, forfeit candidacy
@@ -89,6 +91,7 @@ public class Candidate extends Node {
             RequestVoteRespo.RequestVoteResponse r = (RequestVoteRespo.RequestVoteResponse)message.message;
             if (r.getVoteGranted())
                 votesReceived++;
+            electionStarted = System.currentTimeMillis();
         }
         // might make a call to send() to respond to some of these as we implement them more
     }

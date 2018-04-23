@@ -14,7 +14,8 @@ public class Leader extends Node {
     @Override
     public void handleMessage(Message message) {
         // if term number is greater, immediately relinquish leadership
-
+        if (message == null)
+            return;
         if (message.type == Message.MessageType.APPEND_ENTRIES) {
             // TODO
         }
