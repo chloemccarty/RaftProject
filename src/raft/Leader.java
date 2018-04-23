@@ -1,6 +1,7 @@
 package raft;
 
 public class Leader extends Node {
+    boolean forfeit = false;
 
     public Leader(Node node) {
         super(node);
@@ -23,8 +24,12 @@ public class Leader extends Node {
             // TODO
         }
         else if (message.type == Message.MessageType.REQUEST_VOTES) {
-            // TODO implement Leader voting logic
-            respondToRequestVote();
+            RequestVote.RequestVoteMessage rvm = (RequestVote.RequestVoteMessage) message.message;
+
+            // candidate's log is greater than the leader
+            if (rvm.getTerm() > this.term) {
+                forfeit = true;
+            }
         }
         if (message.type == Message.MessageType.REQUEST_VOTES_RESPONSE) {
             // shouldn't even get this message. We shouldn't have sent out a ReQuestVotes as a leader
@@ -39,7 +44,11 @@ public class Leader extends Node {
         // react to messages
         // send response
         Message m = checkForInput();
-        handleMessage(m);
+        if (m != null){
+            handleMessage(m);
+            if (forfeit)
+                return new Follower(this);
+        }
 
 
         return this;
