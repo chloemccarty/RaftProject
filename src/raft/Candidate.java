@@ -56,11 +56,10 @@ public class Candidate extends Node {
         RequestVote.RequestVoteMessage.Builder builder = RequestVote.RequestVoteMessage.newBuilder();
         builder.setCandidateId(this.id);
         builder.setTerm(this.term);
-        RequestVote.RequestVoteMessage rvm = builder.build();
-
         // TODO implement with AppendEntries Stuff
-        // builder.setLastLogIndex();
-        // builder.setLastLogTerm();
+        builder.setLastLogIndex(-1);
+        builder.setLastLogTerm(-1);
+        RequestVote.RequestVoteMessage rvm = builder.build();
 
         // send to each socket
         for (String ip : config) {
@@ -75,6 +74,8 @@ public class Candidate extends Node {
      */
     @Override
     public void handleMessage(Message message) {
+        if (message == null)
+            return;
         if (message.type == Message.MessageType.APPEND_ENTRIES) {
             // TODO (later)
             // if we received valid append_Entries, forfeit candidacy
