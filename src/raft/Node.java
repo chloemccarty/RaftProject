@@ -86,7 +86,7 @@ public abstract class Node {
         // self contained send message
 
         // List<String> ips = Files.readAllLines(Paths.get("C:\\repos\\Raft\\Config.txt"));
-        List<String> ips = Files.readAllLines(Paths.get("/Users/enavarro/IdeaProjects/exn001/RaftProject/Config.txt"));
+        List<String> ips = Files.readAllLines(Paths.get("C:\\repos\\Raft\\Config.txt"));
         config = new ArrayList<>();
         for (String ip : ips) {
             if (thisIP != ip) {
