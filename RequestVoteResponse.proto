@@ -12,6 +12,6 @@ option java_outer_classname = "RequestVoteRespo";
 
 
 message RequestVoteResponse {
-    required int32 Term = 1;
+    required int32 term = 1;
     required bool voteGranted = 2;
 }
