@@ -85,21 +85,35 @@ public class Candidate extends Node {
             // TODO (later)
         }
         else if (message.type == Message.MessageType.REQUEST_VOTES) {
-            respondToRequestVote();
+            RequestVote.RequestVoteMessage rvm = (RequestVote.RequestVoteMessage) message.message;
+
+            // candidate's log is greater than the leader
+            if (rvm.getTerm() > this.term) {
+                forfeit = true;
+                this.term = rvm.getTerm();
+            }
+
+            // respond to sender
+            RequestVoteRespo.RequestVoteResponse.Builder builder = RequestVoteRespo.RequestVoteResponse.newBuilder();
+            if (forfeit) {
+                builder.setVoteGranted(true);
+            } else {
+                builder.setVoteGranted(false);
+            }
+            builder.setTerm(this.term);
+            RequestVoteRespo.RequestVoteResponse rvr = builder.build();
+            String ip = config.get(rvm.getCandidateId());
+            Network.send(Message.MessageType.REQUEST_VOTES_RESPONSE, rvr, ip);
         }
         if (message.type == Message.MessageType.REQUEST_VOTES_RESPONSE) {
-            RequestVoteRespo.RequestVoteResponse r = (RequestVoteRespo.RequestVoteResponse)message.message;
-            if (r.getVoteGranted())
+            RequestVoteRespo.RequestVoteResponse rvr = (RequestVoteRespo.RequestVoteResponse)message.message;
+            if (rvr.getVoteGranted())
                 votesReceived++;
             electionStarted = System.currentTimeMillis();
         }
         // might make a call to send() to respond to some of these as we implement them more
     }
 
-    @Override
-    public void respondToRequestVote() {
-        // TODO implement Candidate voting logic
-    }
 
     /**
      * Tests whether the election has timed out or not

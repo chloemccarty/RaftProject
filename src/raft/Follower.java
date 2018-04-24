@@ -28,40 +28,33 @@ public class Follower extends Node {
     }
 
     @Override
-    public void respondToRequestVote() {
-
-    }
-
-    @Override
     public void handleMessage(Message message) {
         if (message.type == Message.MessageType.APPEND_ENTRIES) {
             // TODO (later) we must respond appropriately to the leader
         } else if (message.type == Message.MessageType.APPEND_ENTRIES_RESPONSE) {
             // TODO (later)
         } else if (message.type == Message.MessageType.REQUEST_VOTES) {
-            // TODO not sure if this method is needed and if it is
-            // it would need the message as a parameter or else we could not
-            // get information from the message in the method
-            // TODO respondToRequestVote();
-
-            RequestVote.RequestVoteMessage rv = (RequestVote.RequestVoteMessage) message.message;
+            RequestVote.RequestVoteMessage rvm = (RequestVote.RequestVoteMessage) message.message;
             // TODO check to see if candidate's log is at least as up-to-date
             // as our own (later)
-
-            // we have not voted for anyone, vote for this candidate
-            if (this.votedFor == 0) {
-                this.votedFor = rv.getCandidateId();
-                RequestVoteRespo.RequestVoteResponse.Builder builder = RequestVoteRespo.RequestVoteResponse.newBuilder();
-                builder.setVoteGranted(true);
-                RequestVoteRespo.RequestVoteResponse rvr = builder.build();
-
-                // we need the candidate's ip address
-                String candidateIp = "";
-                Network.send(REQUEST_VOTES_RESPONSE, rvr, candidateIp);
+            RequestVoteRespo.RequestVoteResponse.Builder builder = RequestVoteRespo.RequestVoteResponse.newBuilder();
+            if (rvm.getTerm() >= this.term) {
+                // we have not voted for anyone, vote for this candidate
+                if (this.votedFor == -1) {
+                    this.votedFor = rvm.getCandidateId();
+                    builder.setVoteGranted(true);
+                    builder.setTerm(this.term);
+                }
+            } else {
+                builder.setVoteGranted(false);
+                builder.setTerm(this.term);
             }
+            RequestVoteRespo.RequestVoteResponse rvr = builder.build();
+
+            String candidateIp = config.get(rvm.getCandidateId());
+            Network.send(REQUEST_VOTES_RESPONSE, rvr, candidateIp);
         } else if (message.type == Message.MessageType.REQUEST_VOTES_RESPONSE) {
-            // would followers even get this message if they don't send RequestVote RPCs?
-            RequestVoteRespo.RequestVoteResponse r = (RequestVoteRespo.RequestVoteResponse) message.message;
+            // ignore
         }
     }
 

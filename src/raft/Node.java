@@ -33,7 +33,7 @@ public abstract class Node {
         this.term = that.term;
         this.log = that.log;
         this.config = that.config;
-        this.votedFor = that.votedFor;
+        this.votedFor = -1;
         this.commitIndex = that.commitIndex;
         this.lastApplied = that.lastApplied;
 
@@ -43,9 +43,6 @@ public abstract class Node {
         this.log = new ArrayList<LogEntry>();
     }
 
-    // this will also set votedFor
-    // maybe this needs to include the message as a parameter?
-    public abstract void respondToRequestVote();
 
     public Message checkForInput() {
         // check for input
@@ -86,7 +83,7 @@ public abstract class Node {
         // self contained send message
 
         // List<String> ips = Files.readAllLines(Paths.get("C:\\repos\\Raft\\Config.txt"));
-        List<String> ips = Files.readAllLines(Paths.get("C:\\repos\\Raft\\Config.txt"));
+        List<String> ips = Files.readAllLines(Paths.get("/Users/enavarro/IdeaProjects/exn001/RaftProject/Config.txt"));
         config = new ArrayList<>();
         for (String ip : ips) {
             if (thisIP != ip) {
