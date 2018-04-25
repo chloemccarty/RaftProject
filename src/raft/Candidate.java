@@ -10,10 +10,10 @@ public class Candidate extends Node {
     long electionStarted;
     long electionTimeout;
     int votesReceived;
-    boolean forfeit;
 
     public Candidate(Node node) {
         super(node);
+        System.out.println("Initializing node as candidate...");
         electionStarted = System.currentTimeMillis();
         // this will need to be configured to be in a nicer range probably
         electionTimeout = (long) (Math.random() + 1) * 200 + 300;
@@ -30,6 +30,8 @@ public class Candidate extends Node {
 
             if (votesReceived > (numNodes + 1) / 2) {
                 // return a leader Node
+                System.out.println("Votes needed to win: " + (numNodes + 1) / 2);
+                System.out.println("Election won with " + votesReceived + " votes");
                 return new Leader(this);
             }
             else if (forfeit) {
@@ -38,6 +40,7 @@ public class Candidate extends Node {
             }
             else if (timerExpired()){
                 // no leader was elected, return a new candidate
+                System.out.println("Election timed out.");
                 return new Candidate(this);
             }
             // else just keep running until one of these happens
@@ -49,6 +52,7 @@ public class Candidate extends Node {
      * @throws IOException
      */
     private void startElection() throws IOException {
+        System.out.println("Starting election...");
         term++;
         votesReceived = 1;
         votedFor = id;
@@ -69,7 +73,6 @@ public class Candidate extends Node {
 
     /**
      * manipulates instance data that run() uses to determine if we won the election or not
-     * I'm not a huge fan of this organization, so we can change it later, but it's just kind of what I did
      * @param message
      */
     @Override
@@ -85,30 +88,14 @@ public class Candidate extends Node {
             // TODO (later)
         }
         else if (message.type == Message.MessageType.REQUEST_VOTES) {
-            RequestVote.RequestVoteMessage rvm = (RequestVote.RequestVoteMessage) message.message;
-
-            // candidate's log is greater than the leader
-            if (rvm.getTerm() > this.term) {
-                forfeit = true;
-                this.term = rvm.getTerm();
-            }
-
-            // respond to sender
-            RequestVoteRespo.RequestVoteResponse.Builder builder = RequestVoteRespo.RequestVoteResponse.newBuilder();
-            if (forfeit) {
-                builder.setVoteGranted(true);
-            } else {
-                builder.setVoteGranted(false);
-            }
-            builder.setTerm(this.term);
-            RequestVoteRespo.RequestVoteResponse rvr = builder.build();
-            String ip = config.get(rvm.getCandidateId());
-            Network.send(Message.MessageType.REQUEST_VOTES_RESPONSE, rvr, ip);
+            respondToRequestVote(message);
         }
         if (message.type == Message.MessageType.REQUEST_VOTES_RESPONSE) {
             RequestVoteRespo.RequestVoteResponse rvr = (RequestVoteRespo.RequestVoteResponse)message.message;
-            if (rvr.getVoteGranted())
+            if (rvr.getVoteGranted()) {
                 votesReceived++;
+                System.out.println("Votes received: " + votesReceived);
+            }
             electionStarted = System.currentTimeMillis();
         }
         // might make a call to send() to respond to some of these as we implement them more
