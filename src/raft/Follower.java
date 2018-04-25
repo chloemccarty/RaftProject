@@ -16,6 +16,7 @@ public class Follower extends Node {
 
     public Follower() throws IOException {
         initConfig();
+        System.out.println("Initializing node as follower.");
     }
 
     public Follower(Node node) {
@@ -63,8 +64,8 @@ public class Follower extends Node {
         apply();
 
         // TODO not sure if anything else needs to be in this while loop
-        // followers only (1) respond to AppendEntries or (2) become a candidate if
-        // an election timeout occurs
+        // followers only (1) respond to AppendEntries or
+        // (2) become a candidate if an election timeout occurs
         while (true) {
             Message message = checkForInput();
             if (message != null) {

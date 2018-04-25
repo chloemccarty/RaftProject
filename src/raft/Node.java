@@ -1,6 +1,7 @@
 package raft;
 
 import com.google.protobuf.GeneratedMessageV3;
+import connect.Network;
 
 import java.io.FileReader;
 import java.io.IOException;
@@ -26,6 +27,7 @@ public abstract class Node {
     List<LogEntry> log;
     List<String> config;
     final int PORT = 6666;
+    boolean forfeit;
 
 
     public Node(Node that) {
@@ -50,6 +52,7 @@ public abstract class Node {
             // pull a message out
             return messageQueue.poll();
         }
+        System.out.println("No input messages");
         return null;
     }
 
@@ -73,17 +76,14 @@ public abstract class Node {
      * Read IP addresses of nodes from config file.
      */
     public void initConfig() throws IOException {
-        // TODO have a loop that continually accepts requests to this socket
-
+        System.out.println("Configuring cluster...");
         ServerSocket server = new ServerSocket(PORT);
 
         // be sure not to add self to list of nodes to send to
         String thisIP = InetAddress.getLocalHost().getHostAddress();
-        // TODO don't have a socket that you keep around
-        // self contained send message
+        System.out.println("Local IP address: " + thisIP);
 
-        // List<String> ips = Files.readAllLines(Paths.get("C:\\repos\\Raft\\Config.txt"));
-        List<String> ips = Files.readAllLines(Paths.get("/Users/enavarro/IdeaProjects/exn001/RaftProject/Config.txt"));
+        List<String> ips = Files.readAllLines(Paths.get("Config.txt"));
         config = new ArrayList<>();
         for (String ip : ips) {
             if (thisIP != ip) {
@@ -91,5 +91,27 @@ public abstract class Node {
             }
         }
         numNodes = ips.size();
+    }
+
+    public void respondToRequestVote(Message message) {
+        RequestVote.RequestVoteMessage rvm = (RequestVote.RequestVoteMessage) message.message;
+
+        // candidate's log is greater than the leader
+        if (rvm.getTerm() > this.term) {
+            forfeit = true;
+            this.term = rvm.getTerm();
+        }
+
+        // respond to sender
+        RequestVoteRespo.RequestVoteResponse.Builder builder = RequestVoteRespo.RequestVoteResponse.newBuilder();
+        if (forfeit) {
+            builder.setVoteGranted(true);
+        } else {
+            builder.setVoteGranted(false);
+        }
+        builder.setTerm(this.term);
+        RequestVoteRespo.RequestVoteResponse rvr = builder.build();
+        String ip = config.get(rvm.getCandidateId());
+        Network.send(Message.MessageType.REQUEST_VOTES_RESPONSE, rvr, ip);
     }
 }
