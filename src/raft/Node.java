@@ -38,6 +38,7 @@ public abstract class Node {
         this.votedFor = -1;
         this.commitIndex = that.commitIndex;
         this.lastApplied = that.lastApplied;
+        this.numNodes = that.numNodes;
 
     }
 
@@ -52,7 +53,6 @@ public abstract class Node {
             // pull a message out
             return messageQueue.poll();
         }
-        System.out.println("No input messages");
         return null;
     }
 
@@ -86,11 +86,14 @@ public abstract class Node {
         List<String> ips = Files.readAllLines(Paths.get("Config.txt"));
         config = new ArrayList<>();
         for (String ip : ips) {
-            if (thisIP != ip) {
+            // TODO change to .equals()
+            if (!thisIP.equals(ip)) {
+                System.out.println("adding node at ip " + ip);
                 config.add(ip);
             }
         }
-        numNodes = ips.size();
+        numNodes = config.size() + 1; // include ourself in the count
+        System.out.println(numNodes + " nodes in cluster");
     }
 
     public void respondToRequestVote(Message message) {
@@ -106,6 +109,7 @@ public abstract class Node {
         RequestVoteRespo.RequestVoteResponse.Builder builder = RequestVoteRespo.RequestVoteResponse.newBuilder();
         if (forfeit) {
             builder.setVoteGranted(true);
+            System.out.println("Voting for candidate: " + rvm.getCandidateId());
         } else {
             builder.setVoteGranted(false);
         }

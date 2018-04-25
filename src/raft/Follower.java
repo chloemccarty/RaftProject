@@ -16,7 +16,7 @@ public class Follower extends Node {
 
     public Follower() throws IOException {
         initConfig();
-        System.out.println("Initializing node as follower.");
+        System.out.println("Initializing node as follower...");
     }
 
     public Follower(Node node) {
@@ -35,28 +35,33 @@ public class Follower extends Node {
         } else if (message.type == Message.MessageType.APPEND_ENTRIES_RESPONSE) {
             // TODO (later)
         } else if (message.type == Message.MessageType.REQUEST_VOTES) {
-            RequestVote.RequestVoteMessage rvm = (RequestVote.RequestVoteMessage) message.message;
-            // TODO check to see if candidate's log is at least as up-to-date
-            // as our own (later)
-            RequestVoteRespo.RequestVoteResponse.Builder builder = RequestVoteRespo.RequestVoteResponse.newBuilder();
-            if (rvm.getTerm() >= this.term) {
-                // we have not voted for anyone, vote for this candidate
-                if (this.votedFor == -1) {
-                    this.votedFor = rvm.getCandidateId();
-                    builder.setVoteGranted(true);
-                    builder.setTerm(this.term);
-                }
-            } else {
-                builder.setVoteGranted(false);
-                builder.setTerm(this.term);
-            }
-            RequestVoteRespo.RequestVoteResponse rvr = builder.build();
-
-            String candidateIp = config.get(rvm.getCandidateId());
-            Network.send(REQUEST_VOTES_RESPONSE, rvr, candidateIp);
+            respondToRequestVote(message);
         } else if (message.type == Message.MessageType.REQUEST_VOTES_RESPONSE) {
             // ignore
         }
+    }
+
+    @Override
+    public void respondToRequestVote(Message message) {
+        RequestVote.RequestVoteMessage rvm = (RequestVote.RequestVoteMessage) message.message;
+        // TODO check to see if candidate's log is at least as up-to-date
+        // as our own (later)
+        RequestVoteRespo.RequestVoteResponse.Builder builder = RequestVoteRespo.RequestVoteResponse.newBuilder();
+        if (rvm.getTerm() >= this.term) {
+            // we have not voted for anyone, vote for this candidate
+            if (this.votedFor == -1) {
+                this.votedFor = rvm.getCandidateId();
+                builder.setVoteGranted(true);
+                builder.setTerm(this.term);
+            }
+        } else {
+            builder.setVoteGranted(false);
+            builder.setTerm(this.term);
+        }
+        RequestVoteRespo.RequestVoteResponse rvr = builder.build();
+
+        String candidateIp = config.get(rvm.getCandidateId());
+        Network.send(REQUEST_VOTES_RESPONSE, rvr, candidateIp);
     }
 
     @Override
@@ -78,6 +83,7 @@ public class Follower extends Node {
             // no AppendEntries or RequestVotes received and timeout occurred,
             // convert to candidate
             if (timerExpired()) {
+                System.out.println("Heart-beat timer expired");
                 return new Candidate(this);
             }
         }

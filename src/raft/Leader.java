@@ -7,6 +7,7 @@ public class Leader extends Node {
 
     public Leader(Node node) {
         super(node);
+        System.out.println("Initializing as leader...");
     }
 
     @Override

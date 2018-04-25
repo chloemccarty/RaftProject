@@ -13,6 +13,7 @@ public class Candidate extends Node {
 
     public Candidate(Node node) {
         super(node);
+        System.out.println("Initializing node as candidate...");
         electionStarted = System.currentTimeMillis();
         // this will need to be configured to be in a nicer range probably
         electionTimeout = (long) (Math.random() + 1) * 200 + 300;
@@ -29,6 +30,8 @@ public class Candidate extends Node {
 
             if (votesReceived > (numNodes + 1) / 2) {
                 // return a leader Node
+                System.out.println("Votes needed to win: " + (numNodes + 1) / 2);
+                System.out.println("Election won with " + votesReceived + " votes");
                 return new Leader(this);
             }
             else if (forfeit) {
@@ -37,6 +40,7 @@ public class Candidate extends Node {
             }
             else if (timerExpired()){
                 // no leader was elected, return a new candidate
+                System.out.println("Election timed out.");
                 return new Candidate(this);
             }
             // else just keep running until one of these happens
@@ -48,6 +52,7 @@ public class Candidate extends Node {
      * @throws IOException
      */
     private void startElection() throws IOException {
+        System.out.println("Starting election...");
         term++;
         votesReceived = 1;
         votedFor = id;
@@ -88,8 +93,10 @@ public class Candidate extends Node {
         }
         if (message.type == Message.MessageType.REQUEST_VOTES_RESPONSE) {
             RequestVoteRespo.RequestVoteResponse rvr = (RequestVoteRespo.RequestVoteResponse)message.message;
-            if (rvr.getVoteGranted())
+            if (rvr.getVoteGranted()) {
                 votesReceived++;
+                System.out.println("Votes received: " + votesReceived);
+            }
             electionStarted = System.currentTimeMillis();
         }
         // might make a call to send() to respond to some of these as we implement them more
