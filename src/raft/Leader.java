@@ -27,7 +27,6 @@ public class Leader extends Node {
         if (message.type == Message.MessageType.REQUEST_VOTES_RESPONSE) {
             // shouldn't even get this message. We shouldn't have sent out a ReQuestVotes as a leader
         }
-        // will make a call to send response
     }
 
     @Override

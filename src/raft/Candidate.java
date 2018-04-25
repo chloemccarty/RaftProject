@@ -73,7 +73,6 @@ public class Candidate extends Node {
 
     /**
      * manipulates instance data that run() uses to determine if we won the election or not
-     * I'm not a huge fan of this organization, so we can change it later, but it's just kind of what I did
      * @param message
      */
     @Override
