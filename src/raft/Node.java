@@ -77,7 +77,6 @@ public abstract class Node {
      */
     public void initConfig() throws IOException {
         System.out.println("Configuring cluster...");
-        ServerSocket server = new ServerSocket(PORT);
 
         // be sure not to add self to list of nodes to send to
         String thisIP = InetAddress.getLocalHost().getHostAddress();

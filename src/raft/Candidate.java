@@ -16,7 +16,7 @@ public class Candidate extends Node {
         System.out.println("Initializing node as candidate...");
         electionStarted = System.currentTimeMillis();
         // this will need to be configured to be in a nicer range probably
-        electionTimeout = (long) (Math.random() + 1) * 200 + 300;
+        electionTimeout = (long) (Math.random() + 1) * 200 + 500;
     }
 
     @Override
@@ -26,7 +26,11 @@ public class Candidate extends Node {
 
         while (true) {
             Message msg = checkForInput();
-            handleMessage(msg);
+            if (msg != null) {
+                System.out.println("Message received by candidate.");
+                handleMessage(msg);
+            }
+
 
             if (votesReceived > (numNodes + 1) / 2) {
                 // return a leader Node
@@ -77,8 +81,6 @@ public class Candidate extends Node {
      */
     @Override
     public void handleMessage(Message message) {
-        if (message == null)
-            return;
         if (message.type == Message.MessageType.APPEND_ENTRIES) {
             // TODO (later)
             // if we received valid append_Entries, forfeit candidacy

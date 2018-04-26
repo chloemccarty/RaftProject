@@ -16,6 +16,7 @@ public class Follower extends Node {
 
     public Follower() throws IOException {
         initConfig();
+        votedFor = -1;
         System.out.println("Initializing node as follower...");
     }
 
@@ -25,7 +26,7 @@ public class Follower extends Node {
 
         // used same set up as in the Candidate class so this may need
         // configured as well
-        electionTimeout = (long) (Math.random() + 1) * 200 + 300;
+        electionTimeout = (long) (Math.random() + 1) * 200 + 500;
     }
 
     @Override
@@ -47,13 +48,12 @@ public class Follower extends Node {
         // TODO check to see if candidate's log is at least as up-to-date
         // as our own (later)
         RequestVoteRespo.RequestVoteResponse.Builder builder = RequestVoteRespo.RequestVoteResponse.newBuilder();
-        if (rvm.getTerm() >= this.term) {
+        if (rvm.getTerm() >= this.term && this.votedFor == -1) {
             // we have not voted for anyone, vote for this candidate
-            if (this.votedFor == -1) {
-                this.votedFor = rvm.getCandidateId();
-                builder.setVoteGranted(true);
-                builder.setTerm(this.term);
-            }
+            this.votedFor = rvm.getCandidateId();
+            builder.setVoteGranted(true);
+            builder.setTerm(this.term);
+
         } else {
             builder.setVoteGranted(false);
             builder.setTerm(this.term);
@@ -74,6 +74,7 @@ public class Follower extends Node {
         while (true) {
             Message message = checkForInput();
             if (message != null) {
+                System.out.println("Message received");
                 handleMessage(message);
 
                 // reset timer because we received an AppendEntries or a RequestVote

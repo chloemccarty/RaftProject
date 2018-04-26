@@ -17,9 +17,9 @@ public class Listener extends Thread {
 
         public Handler(Socket socket) throws IOException {
             DataInputStream in = new DataInputStream(socket.getInputStream());
-            // read in message... they should be self describing
+            // read in message
             byte msgType = in.readByte();
-
+            System.out.println("Read in message of type " + msgType);
             if (msgType == 0) {
                 // TODO appendEntries protobuf
 
@@ -49,7 +49,7 @@ public class Listener extends Thread {
             ServerSocket sock = new ServerSocket(PORT);
 
             while (true) {
-                new Handler(sock.accept());
+                new Handler(sock.accept()).start();
             }
         } catch (IOException e) {
             e.printStackTrace();
