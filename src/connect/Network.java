@@ -5,14 +5,14 @@ import raft.Message;
 
 public class Network {
 
-    public static Listener listen() {
-        return new Listener();
+    public static void listen() {
+        new Listener().start();
     }
 
     // public static void send(int type, byte[] data, String IP) {
     public static void send(Message.MessageType type, GeneratedMessageV3 data, String IP) {
-                // TODO convert type to int!!!
-        new Sender((byte) 0, data, IP);
+        System.out.println("Sending message");
+        new Sender((byte) type.value, data, IP).start();
     }
 
 }

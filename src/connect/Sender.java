@@ -24,6 +24,7 @@ public class Sender extends Thread {
         // send message and data to other node
         try {
             Socket socket = new Socket(ip, PORT);
+
             DataOutputStream out = new DataOutputStream(socket.getOutputStream());
             out.writeByte(type);
             // send length of data
