@@ -74,7 +74,7 @@ public class Follower extends Node {
         while (true) {
             Message message = checkForInput();
             if (message != null) {
-                System.out.println("Message received");
+                System.out.println("Message received by follower");
                 handleMessage(message);
 
                 // reset timer because we received an AppendEntries or a RequestVote

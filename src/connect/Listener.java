@@ -14,31 +14,42 @@ public class Listener extends Thread {
     static int PORT = 6666;
 
     public class Handler extends Thread {
+        Socket socket;
 
         public Handler(Socket socket) throws IOException {
-            DataInputStream in = new DataInputStream(socket.getInputStream());
+            this.socket = socket;
+        }
+
+        @Override
+        public void run() {
+            DataInputStream in = null;
+            try {
+                in = new DataInputStream(socket.getInputStream());
+                byte msgType = in.readByte();
             // read in message
-            byte msgType = in.readByte();
-            System.out.println("Read in message of type " + msgType);
-            if (msgType == 0) {
-                // TODO appendEntries protobuf
 
-                NodeRunner.messageQueue.add(new Message(Message.MessageType.APPEND_ENTRIES, null));
-            }
-            else if (msgType == 1) {
-                NodeRunner.messageQueue.add(new Message(Message.MessageType.APPEND_ENTRIES_RESPONSE, null));
-            }
-            else if (msgType == 2) {
-                // TODO read in RequestVotes object from in
-                RequestVote.RequestVoteMessage rv = RequestVote.RequestVoteMessage.parseFrom(in);
-                NodeRunner.messageQueue.add(new Message(Message.MessageType.REQUEST_VOTES, rv));
-            }
-            else if (msgType == 3) {
-                // TODO read in RequestVotesResponse object from in
-                RequestVoteRespo.RequestVoteResponse rvr = RequestVoteRespo.RequestVoteResponse.parseFrom(in);
-                NodeRunner.messageQueue.add(new Message(Message.MessageType.REQUEST_VOTES_RESPONSE, rvr));
-            }
 
+                if (msgType == 0) {
+                    // TODO appendEntries protobuf
+
+                    NodeRunner.messageQueue.add(new Message(Message.MessageType.APPEND_ENTRIES, null));
+                }
+                else if (msgType == 1) {
+                    NodeRunner.messageQueue.add(new Message(Message.MessageType.APPEND_ENTRIES_RESPONSE, null));
+                }
+                else if (msgType == 2) {
+                    // TODO read in RequestVotes object from in
+                    RequestVote.RequestVoteMessage rv = RequestVote.RequestVoteMessage.parseFrom(in);
+                    NodeRunner.messageQueue.add(new Message(Message.MessageType.REQUEST_VOTES, rv));
+                }
+                else if (msgType == 3) {
+                    // TODO read in RequestVotesResponse object from in
+                    RequestVoteRespo.RequestVoteResponse rvr = RequestVoteRespo.RequestVoteResponse.parseFrom(in);
+                    NodeRunner.messageQueue.add(new Message(Message.MessageType.REQUEST_VOTES_RESPONSE, rvr));
+            }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 

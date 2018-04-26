@@ -53,6 +53,7 @@ public abstract class Node {
             // pull a message out
             return messageQueue.poll();
         }
+
         return null;
     }
 

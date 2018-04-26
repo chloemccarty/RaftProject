@@ -31,18 +31,19 @@ public class Leader extends Node {
 
     @Override
     public Node run() {
-        apply();
-        // check messages
-        // react to messages
-        // send response
-        Message m = checkForInput();
-        if (m != null) {
-            handleMessage(m);
-            if (forfeit)
-                return new Follower(this);
+        while (true) {
+            apply();
+            // check messages
+            // react to messages
+            // send response
+            Message m = checkForInput();
+            if (m != null) {
+                System.out.println("Message received by leader");
+                handleMessage(m);
+                if (forfeit)
+                    return new Follower(this);
+            }
+
         }
-
-
-        return this;
     }
 }
