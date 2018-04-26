@@ -3,6 +3,7 @@ package raft;
 import connect.*;
 import java.io.IOException;
 import java.util.Queue;
+import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.concurrent.SynchronousQueue;
 
 public class NodeRunner {
@@ -12,7 +13,7 @@ public class NodeRunner {
     public static void main(String[] args) throws IOException {
 
 
-        messageQueue = new SynchronousQueue<Message>();
+        messageQueue = new ConcurrentLinkedDeque<Message>();
         // will a synchronous queue keep things from getting messed up with all the threading?
 
         // create a listener that will listen and "dispatch" messages

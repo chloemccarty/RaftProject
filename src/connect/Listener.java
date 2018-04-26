@@ -18,6 +18,7 @@ public class Listener extends Thread {
 
         public Handler(Socket socket) throws IOException {
             this.socket = socket;
+            System.out.println("Adding message to queue");
         }
 
         @Override
