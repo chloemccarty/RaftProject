@@ -1,5 +1,6 @@
 package raft;
 
+import client.Client;
 import com.google.protobuf.GeneratedMessageV3;
 import connect.Network;
 
@@ -28,6 +29,7 @@ public abstract class Node {
     List<String> config;
     final int PORT = 6666;
     boolean forfeit;
+    Client client;
 
 
     public Node(Node that) {
@@ -39,7 +41,6 @@ public abstract class Node {
         this.commitIndex = that.commitIndex;
         this.lastApplied = that.lastApplied;
         this.numNodes = that.numNodes;
-
     }
 
     public Node() {

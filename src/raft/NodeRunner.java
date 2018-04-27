@@ -1,5 +1,6 @@
 package raft;
 
+import client.Client;
 import connect.*;
 import java.io.IOException;
 import java.util.Queue;
@@ -19,10 +20,12 @@ public class NodeRunner {
 
         // create a listener that will listen and "dispatch" messages
         Network.listen();
+        // start the client thread
+        Client client = new Client();
+        client.start();
 
         // initialize the node (all nodes are followers when first initialized)
         Node node = new Follower();
-
 
         while (true) {
             // run() will return the type of node we need for the next time it runs

@@ -1,5 +1,6 @@
 package raft;
 
+import client.Client;
 import connect.Network;
 
 import java.io.IOException;
@@ -18,6 +19,8 @@ public class Follower extends Node {
         initConfig();
         votedFor = -1;
         System.out.println("Initializing node as follower...");
+        client = new Client(false);
+        client.start();
     }
 
     public Follower(Node node) {
@@ -85,6 +88,7 @@ public class Follower extends Node {
             // convert to candidate
             if (timerExpired()) {
                 System.out.println("Heart-beat timer expired");
+                client.interrupt();
                 return new Candidate(this);
             }
         }

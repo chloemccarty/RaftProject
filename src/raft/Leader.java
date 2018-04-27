@@ -1,5 +1,6 @@
 package raft;
 
+import client.Client;
 import connect.Network;
 
 public class Leader extends Node {
@@ -8,6 +9,8 @@ public class Leader extends Node {
     public Leader(Node node) {
         super(node);
         System.out.println("Initializing as leader...");
+        client = new Client(true);
+        client.start();
     }
 
     @Override
@@ -40,8 +43,10 @@ public class Leader extends Node {
             if (m != null) {
                 System.out.println("Message received by leader");
                 handleMessage(m);
-                if (forfeit)
+                if (forfeit) {
+                    client.interrupt();
                     return new Follower(this);
+                }
             }
 
         }
