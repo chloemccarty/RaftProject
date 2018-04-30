@@ -11,6 +11,8 @@ import java.util.concurrent.SynchronousQueue;
 public class NodeRunner {
 
     public static Queue<Message> messageQueue;
+    public static Client client;
+
 
     public static void main(String[] args) throws IOException {
 
@@ -21,7 +23,7 @@ public class NodeRunner {
         // create a listener that will listen and "dispatch" messages
         Network.listen();
         // start the client thread
-        Client client = new Client();
+        client = new Client(false);
         client.start();
 
         // initialize the node (all nodes are followers when first initialized)
@@ -29,8 +31,15 @@ public class NodeRunner {
 
         while (true) {
             // run() will return the type of node we need for the next time it runs
-
             node = node.run();
+            // update the client so we know whether to provide the leader or follower menu to the users
+            if (node.getClass() == Leader.class) {
+                client.leader = true;
+            }
+            else {
+                client.leader = false;
+            }
+
         }
     }
 

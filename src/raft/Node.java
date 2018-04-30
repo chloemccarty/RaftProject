@@ -29,7 +29,6 @@ public abstract class Node {
     List<String> config;
     final int PORT = 6666;
     boolean forfeit;
-    Client client;
 
 
     public Node(Node that) {

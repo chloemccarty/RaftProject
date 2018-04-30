@@ -9,8 +9,6 @@ public class Leader extends Node {
     public Leader(Node node) {
         super(node);
         System.out.println("Initializing as leader...");
-        client = new Client(true);
-        client.start();
     }
 
     @Override
@@ -44,7 +42,6 @@ public class Leader extends Node {
                 System.out.println("Message received by leader");
                 handleMessage(m);
                 if (forfeit) {
-                    client.interrupt();
                     return new Follower(this);
                 }
             }

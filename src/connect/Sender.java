@@ -1,6 +1,7 @@
 package connect;
 
 import com.google.protobuf.GeneratedMessageV3;
+import raft.NodeRunner;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -23,13 +24,15 @@ public class Sender extends Thread {
     public void run() {
         // send message and data to other node
         try {
-            Socket socket = new Socket(ip, PORT);
+            if (!NodeRunner.client.partitioned) {
+                Socket socket = new Socket(ip, PORT);
 
-            DataOutputStream out = new DataOutputStream(socket.getOutputStream());
-            out.writeByte(type);
-            // send length of data
-            data.writeTo(out);
-            socket.close();
+                DataOutputStream out = new DataOutputStream(socket.getOutputStream());
+                out.writeByte(type);
+                // send length of data
+                data.writeTo(out);
+                socket.close();
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }

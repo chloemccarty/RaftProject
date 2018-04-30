@@ -1,5 +1,7 @@
 package client;
 
+import java.util.Scanner;
+
 public class Client extends Thread {
     public boolean leader;
     public boolean partitioned;
@@ -34,9 +36,28 @@ public class Client extends Thread {
     /**
      * Allows a user to partition / reconnect a node
      */
-    private static void partitionOnly() {
+    private void partitionOnly() {
         // set partitioned = true if partitioned
         // else partitioned = false
+        System.out.println("Currently connected: " + !partitioned);
+        Scanner in = new Scanner(System.in);
+        while (true) {
+            System.out.println("Would you like to toggle the connection status? Enter yes if yes, do nothing if no");
+
+            String input = in.nextLine();
+            if (input.equalsIgnoreCase("yes")) {
+                if (partitioned) {
+                    System.out.println("Reconnecting...");
+                } else {
+                    System.out.println("Partitioning the current server.");
+                }
+                partitioned = !partitioned;
+                break;
+            } else {
+                System.out.println("Please enter valid input");
+            }
+        }
+
     }
 
     /**

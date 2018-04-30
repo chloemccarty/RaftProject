@@ -18,8 +18,6 @@ public class Candidate extends Node {
         electionStarted = System.currentTimeMillis();
         // this will need to be configured to be in a nicer range probably
         electionTimeout = (long) (Math.random() + 1) * 200 + 500;
-        client = new Client(false);
-        client.start();
     }
 
     @Override
@@ -39,19 +37,15 @@ public class Candidate extends Node {
                 // return a leader Node
                 System.out.println("Votes needed to win: " + (numNodes + 1) / 2);
                 System.out.println("Election won with " + votesReceived + " votes");
-                // TODO stop running the client thread
-                client.interrupt();
                 return new Leader(this);
             }
             else if (forfeit) {
                 // if we received a heartbeat, there's a new leader
-                client.interrupt();
                 return new Follower(this);
             }
             else if (timerExpired()){
                 // no leader was elected, return a new candidate
                 System.out.println("Election timed out.");
-                client.interrupt();
                 return new Candidate(this);
             }
             // else just keep running until one of these happens
