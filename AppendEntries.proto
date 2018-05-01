@@ -29,4 +29,5 @@ message AppendEntriesMessage {
 message Response {
     optional int32 term = 1;
     optional bool success = 2;
+    required int32 followerId = 3;
 }
