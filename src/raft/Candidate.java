@@ -1,5 +1,6 @@
 package raft;
 
+import client.Client;
 import connect.Network;
 
 import java.io.IOException;

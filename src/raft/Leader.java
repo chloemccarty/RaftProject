@@ -1,5 +1,6 @@
 package raft;
 
+import client.Client;
 import connect.Network;
 
 public class Leader extends Node {
@@ -40,8 +41,9 @@ public class Leader extends Node {
             if (m != null) {
                 System.out.println("Message received by leader");
                 handleMessage(m);
-                if (forfeit)
+                if (forfeit) {
                     return new Follower(this);
+                }
             }
 
         }
