@@ -34,6 +34,7 @@ public class Listener extends Thread {
                     // TODO appendEntries protobuf
 
                     NodeRunner.messageQueue.add(new Message(Message.MessageType.APPEND_ENTRIES, null));
+                    //need to include the ip address or the node id in the message so that we can update nextIndex and matchIndex
                 }
                 else if (msgType == 1) {
                     NodeRunner.messageQueue.add(new Message(Message.MessageType.APPEND_ENTRIES_RESPONSE, null));
