@@ -28,6 +28,7 @@ public abstract class Node {
     List<String> config;
     final int PORT = 6666;
     boolean forfeit;
+    String database;
 
 
     public Node(Node that) {
@@ -70,7 +71,28 @@ public abstract class Node {
      * All nodes must apply new logs if commitIndex > lastApplied
      */
     public void apply() {
+        /*if (this.commitIndex > this.lastApplied) {
+            //execute commands in log from (lastApplied+1) up through commitIndex
+            for (int i=lastApplied; i<=commitIndex; i++) {
+                LogEntry entry = log.get(i);
+                String[] command = new String[2];
+                command = entry.cmd.split(",");
 
+                if (command[0] == "1") {
+                    //execute append command. Append takes a string input to append to database (which is one big string).
+                    database.concat(command[1]);
+                }
+
+                else {
+                    //execute delete command. Delete takes an int input to tell from which position to begin deleting
+                    //delete(entry.cmd.split(",")[1]);
+                    StringBuilder sb = new StringBuilder(database);
+                    sb.delete(Integer.parseInt(command[1]), database.length());
+
+
+                }
+            }
+        }*/
     }
 
     /**
