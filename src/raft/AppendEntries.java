@@ -1904,6 +1904,15 @@ public final class AppendEntries {
      * <code>optional bool success = 2;</code>
      */
     boolean getSuccess();
+
+    /**
+     * <code>required int32 followerId = 3;</code>
+     */
+    boolean hasFollowerId();
+    /**
+     * <code>required int32 followerId = 3;</code>
+     */
+    int getFollowerId();
   }
   /**
    * Protobuf type {@code raft.Response}
@@ -1920,6 +1929,7 @@ public final class AppendEntries {
     private Response() {
       term_ = 0;
       success_ = false;
+      followerId_ = 0;
     }
 
     @java.lang.Override
@@ -1958,6 +1968,11 @@ public final class AppendEntries {
             case 16: {
               bitField0_ |= 0x00000002;
               success_ = input.readBool();
+              break;
+            }
+            case 24: {
+              bitField0_ |= 0x00000004;
+              followerId_ = input.readInt32();
               break;
             }
           }
@@ -2015,12 +2030,31 @@ public final class AppendEntries {
       return success_;
     }
 
+    public static final int FOLLOWERID_FIELD_NUMBER = 3;
+    private int followerId_;
+    /**
+     * <code>required int32 followerId = 3;</code>
+     */
+    public boolean hasFollowerId() {
+      return ((bitField0_ & 0x00000004) == 0x00000004);
+    }
+    /**
+     * <code>required int32 followerId = 3;</code>
+     */
+    public int getFollowerId() {
+      return followerId_;
+    }
+
     private byte memoizedIsInitialized = -1;
     public final boolean isInitialized() {
       byte isInitialized = memoizedIsInitialized;
       if (isInitialized == 1) return true;
       if (isInitialized == 0) return false;
 
+      if (!hasFollowerId()) {
+        memoizedIsInitialized = 0;
+        return false;
+      }
       memoizedIsInitialized = 1;
       return true;
     }
@@ -2032,6 +2066,9 @@ public final class AppendEntries {
       }
       if (((bitField0_ & 0x00000002) == 0x00000002)) {
         output.writeBool(2, success_);
+      }
+      if (((bitField0_ & 0x00000004) == 0x00000004)) {
+        output.writeInt32(3, followerId_);
       }
       unknownFields.writeTo(output);
     }
@@ -2048,6 +2085,10 @@ public final class AppendEntries {
       if (((bitField0_ & 0x00000002) == 0x00000002)) {
         size += com.google.protobuf.CodedOutputStream
           .computeBoolSize(2, success_);
+      }
+      if (((bitField0_ & 0x00000004) == 0x00000004)) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeInt32Size(3, followerId_);
       }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
@@ -2075,6 +2116,11 @@ public final class AppendEntries {
         result = result && (getSuccess()
             == other.getSuccess());
       }
+      result = result && (hasFollowerId() == other.hasFollowerId());
+      if (hasFollowerId()) {
+        result = result && (getFollowerId()
+            == other.getFollowerId());
+      }
       result = result && unknownFields.equals(other.unknownFields);
       return result;
     }
@@ -2094,6 +2140,10 @@ public final class AppendEntries {
         hash = (37 * hash) + SUCCESS_FIELD_NUMBER;
         hash = (53 * hash) + com.google.protobuf.Internal.hashBoolean(
             getSuccess());
+      }
+      if (hasFollowerId()) {
+        hash = (37 * hash) + FOLLOWERID_FIELD_NUMBER;
+        hash = (53 * hash) + getFollowerId();
       }
       hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
@@ -2228,6 +2278,8 @@ public final class AppendEntries {
         bitField0_ = (bitField0_ & ~0x00000001);
         success_ = false;
         bitField0_ = (bitField0_ & ~0x00000002);
+        followerId_ = 0;
+        bitField0_ = (bitField0_ & ~0x00000004);
         return this;
       }
 
@@ -2260,6 +2312,10 @@ public final class AppendEntries {
           to_bitField0_ |= 0x00000002;
         }
         result.success_ = success_;
+        if (((from_bitField0_ & 0x00000004) == 0x00000004)) {
+          to_bitField0_ |= 0x00000004;
+        }
+        result.followerId_ = followerId_;
         result.bitField0_ = to_bitField0_;
         onBuilt();
         return result;
@@ -2308,12 +2364,18 @@ public final class AppendEntries {
         if (other.hasSuccess()) {
           setSuccess(other.getSuccess());
         }
+        if (other.hasFollowerId()) {
+          setFollowerId(other.getFollowerId());
+        }
         this.mergeUnknownFields(other.unknownFields);
         onChanged();
         return this;
       }
 
       public final boolean isInitialized() {
+        if (!hasFollowerId()) {
+          return false;
+        }
         return true;
       }
 
@@ -2399,6 +2461,38 @@ public final class AppendEntries {
         onChanged();
         return this;
       }
+
+      private int followerId_ ;
+      /**
+       * <code>required int32 followerId = 3;</code>
+       */
+      public boolean hasFollowerId() {
+        return ((bitField0_ & 0x00000004) == 0x00000004);
+      }
+      /**
+       * <code>required int32 followerId = 3;</code>
+       */
+      public int getFollowerId() {
+        return followerId_;
+      }
+      /**
+       * <code>required int32 followerId = 3;</code>
+       */
+      public Builder setFollowerId(int value) {
+        bitField0_ |= 0x00000004;
+        followerId_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>required int32 followerId = 3;</code>
+       */
+      public Builder clearFollowerId() {
+        bitField0_ = (bitField0_ & ~0x00000004);
+        followerId_ = 0;
+        onChanged();
+        return this;
+      }
       public final Builder setUnknownFields(
           final com.google.protobuf.UnknownFieldSet unknownFields) {
         return super.setUnknownFields(unknownFields);
@@ -2479,8 +2573,9 @@ public final class AppendEntries {
       "\022\024\n\014leaderCommit\030\005 \002(\005\0221\n\007entries\030\006 \003(\0132" +
       " .raft.AppendEntriesMessage.Entry\032,\n\005Ent" +
       "ry\022\022\n\ntermNumber\030\001 \001(\005\022\017\n\007message\030\002 \001(\t\"" +
-      ")\n\010Response\022\014\n\004term\030\001 \001(\005\022\017\n\007success\030\002 \001" +
-      "(\010B\025\n\004raftB\rAppendEntries"
+      "=\n\010Response\022\014\n\004term\030\001 \001(\005\022\017\n\007success\030\002 \001" +
+      "(\010\022\022\n\nfollowerId\030\003 \002(\005B\025\n\004raftB\rAppendEn" +
+      "tries"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
         new com.google.protobuf.Descriptors.FileDescriptor.    InternalDescriptorAssigner() {
@@ -2512,7 +2607,7 @@ public final class AppendEntries {
     internal_static_raft_Response_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_raft_Response_descriptor,
-        new java.lang.String[] { "Term", "Success", });
+        new java.lang.String[] { "Term", "Success", "FollowerId", });
     com.google.protobuf.TimestampProto.getDescriptor();
   }
 
