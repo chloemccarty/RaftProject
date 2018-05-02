@@ -28,7 +28,7 @@ public abstract class Node {
     List<LogEntry> log;
     List<String> config;
     final int PORT = 6666;
-    boolean forfeit;
+    boolean forfeit = false;
 
 
     public Node(Node that) {

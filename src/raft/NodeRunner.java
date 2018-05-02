@@ -31,13 +31,9 @@ public class NodeRunner {
 
         // initialize the node (all nodes are followers when first initialized)
         // while loop to prevent race condition due to threading
-        Node node;
-        while (true) {
-            if (client != null) {
-                node = new Follower();
-                break;
-            }
-        }
+        Node node = new Follower();
+
+
 
         while (true) {
             // run() will return the type of node we need for the next time it runs
