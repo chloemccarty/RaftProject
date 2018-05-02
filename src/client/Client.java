@@ -3,20 +3,21 @@ package client;
 import java.util.Scanner;
 
 public class Client extends Thread {
-    public boolean leader;
-    public boolean partitioned;
+    public GUI guiClient;
 
     public Client(boolean isLeader) {
-        leader = isLeader;
-        // TODO figure out how the SENDER will know if a node is partitioned?
-        partitioned = false;
+        guiClient = new GUI(isLeader, false);
+    }
+
+    public boolean partitioned() {
+        return guiClient.partitioned;
     }
 
     @Override
     public void run() {
         // TODO only run full menu the leader node
         // TODO only allow partitioning on the followers
-        GUI.init();
+        guiClient.init();
 
     }
 
@@ -26,19 +27,19 @@ public class Client extends Thread {
     private void partitionOnly() {
         // set partitioned = true if partitioned
         // else partitioned = false
-        System.out.println("Currently connected: " + !partitioned);
+        System.out.println("Currently connected: " + !partitioned());
         Scanner in = new Scanner(System.in);
         while (true) {
             System.out.println("Would you like to toggle the connection status? Enter yes if yes, do nothing if no");
 
             String input = in.nextLine();
             if (input.equalsIgnoreCase("yes")) {
-                if (partitioned) {
+                if (partitioned()) {
                     System.out.println("Reconnecting...");
                 } else {
                     System.out.println("Partitioning the current server.");
                 }
-                partitioned = !partitioned;
+                //guiClient.partitioned = !partitioned();
                 break;
             } else {
                 System.out.println("Please enter valid input");

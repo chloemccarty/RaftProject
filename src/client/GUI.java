@@ -7,16 +7,22 @@ import javax.swing.border.Border;
 
 public class GUI extends Thread {
 
-    public static boolean leader;
-    public static boolean partitioned;
-    public static JTextField deleteIndex;
-    public static JButton deleteSubmit;
-    public static JTextField appendString;
-    public static JButton appendSubmit;
-    public static JCheckBox connectedCheck;
-    public static JPanel leaderButtons;
+    public boolean leader;
+    public boolean partitioned;
+    public JTextField deleteIndex;
+    public JButton deleteSubmit;
+    public JTextField appendString;
+    public JButton appendSubmit;
+    public JCheckBox connectedCheck;
+    public JPanel leaderButtons;
 
-    private static class HelloWorldDisplay extends JPanel {
+    public GUI(boolean isLeader, boolean partitioned) {
+        leader = isLeader;
+        this.partitioned = partitioned;
+        checkStatus();
+    }
+
+    private class HelloWorldDisplay extends JPanel {
         public void paintComponent(Graphics g) {
             super.paintComponent(g);
             g.drawString("Welcome to Raft!", 30, 30);
@@ -24,7 +30,7 @@ public class GUI extends Thread {
         }
     }
 
-    private static class ButtonHandler implements ActionListener {
+    private class ButtonHandler implements ActionListener {
         public void actionPerformed(ActionEvent e) {
             Object source = e.getSource();
             if (source == appendSubmit) {
@@ -37,34 +43,23 @@ public class GUI extends Thread {
             }
             else if (source == connectedCheck) {
                 boolean checked = connectedCheck.isSelected();
-                if (!checked)
-                    partition();
-                else
-                    ;
+                partitioned = !checked;
             }
         }
-
-        private void partition() {
-        }
     }
 
-    @Override
-    public void run() {
 
-
-    }
-
-    public static void init() {
+    public void init() {
         HelloWorldDisplay displayPanel = new HelloWorldDisplay();
 
         // create the display panel
 
         appendString = new JTextField(15);
         appendString.setMargin( new Insets(5,5,5,5) );
-        appendSubmit = new JButton("Submit String");  // TODO add a listener
+        appendSubmit = new JButton("Submit String");
         deleteIndex = new JTextField(5);
         deleteIndex.setMargin( new Insets(5,5,5,5) );
-        deleteSubmit = new JButton("Delete from Index");  // TODO add a listener
+        deleteSubmit = new JButton("Delete from Index");
 
         ButtonHandler listener = new ButtonHandler();
         appendSubmit.addActionListener(listener);
@@ -95,15 +90,19 @@ public class GUI extends Thread {
         content.add(displayPanel);
         content.add(buttonPanel);
 
-        JFrame window = new JFrame("GUI Gang");
+        JFrame window = new JFrame("Raft Client");
         window.setContentPane(content);
         window.setSize(350, 300);
         window.setLocation(200, 150);
         window.setVisible(true);
 
-        if (!leader) {
-            leaderButtons.setVisible(false);
-        }
-        // TODO toggle visibility of leader when status changes
+        checkStatus();
+        // TODO listen to toggle visibility of leader when status changes
     }
+
+    public void checkStatus() {
+        leaderButtons.setVisible(leader);
+    }
+
+
 }

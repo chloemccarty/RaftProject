@@ -29,7 +29,7 @@ public class Listener extends Thread {
                 byte msgType = in.readByte();
             // read in message
                 // TODO: if partitioned, don't put the message in the queue
-                boolean partitioned = NodeRunner.client.partitioned;
+                boolean partitioned = NodeRunner.client.partitioned();
 
                 if (msgType == 0) {
 

@@ -24,7 +24,7 @@ public class Sender extends Thread {
     public void run() {
         // send message and data to other node
         try {
-            if (!NodeRunner.client.partitioned) {
+            if (!NodeRunner.client.partitioned()) {
                 Socket socket = new Socket(ip, PORT);
 
                 DataOutputStream out = new DataOutputStream(socket.getOutputStream());
