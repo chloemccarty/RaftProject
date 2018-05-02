@@ -1,14 +1,27 @@
 package client;
 
+import javax.swing.*;
 import java.util.Scanner;
 
 public class Client extends Thread {
     public GUI guiClient;
     private boolean leader;
 
-    public void setLeader(boolean leader) {
-        this.leader = leader;
-        guiClient.setLeaderStatus(leader);
+    /**
+     * To be called for printing "logs" rather than using syso print
+     * @param s
+     */
+    public void log(String s) {
+        System.out.println(s);
+        if (guiClient.content != null)
+            guiClient.content.repaint();
+        else
+            System.out.println("WARNING: CONTENT NULL");
+    }
+
+    public void setLeader(boolean lead) {
+        this.leader = lead;
+        SwingUtilities.invokeLater(() -> guiClient.setLeaderStatus(leader));
     }
 
     public Client(boolean isLeader) {
@@ -21,7 +34,7 @@ public class Client extends Thread {
 
     @Override
     public void run() {
-        guiClient.init();
+        guiClient.display();
     }
 
 }

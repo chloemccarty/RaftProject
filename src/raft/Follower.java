@@ -18,7 +18,7 @@ public class Follower extends Node {
     public Follower() throws IOException {
         initConfig();
         votedFor = -1;
-        System.out.println("Initializing node as follower...");
+        NodeRunner.client.log("Initializing node as follower...");
     }
 
     public Follower(Node node) {
@@ -75,7 +75,7 @@ public class Follower extends Node {
         while (true) {
             Message message = checkForInput();
             if (message != null) {
-                System.out.println("Message received by follower");
+                NodeRunner.client.log("Message received by follower");
                 handleMessage(message);
 
                 // reset timer because we received an AppendEntries or a RequestVote
@@ -85,7 +85,7 @@ public class Follower extends Node {
             // no AppendEntries or RequestVotes received and timeout occurred,
             // convert to candidate
             if (timerExpired()) {
-                System.out.println("Heart-beat timer expired");
+                NodeRunner.client.log("Heart-beat timer expired");
                 return new Candidate(this);
             }
         }

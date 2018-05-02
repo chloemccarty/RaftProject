@@ -35,8 +35,8 @@ public class Candidate extends Node {
 
             if (votesReceived > (numNodes + 1) / 2) {
                 // return a leader Node
-                System.out.println("Votes needed to win: " + (numNodes + 1) / 2);
-                System.out.println("Election won with " + votesReceived + " votes");
+                NodeRunner.client.log("Votes needed to win: " + (numNodes + 1) / 2);
+                NodeRunner.client.log("Election won with " + votesReceived + " votes");
                 return new Leader(this);
             }
             else if (forfeit) {
@@ -45,7 +45,7 @@ public class Candidate extends Node {
             }
             else if (timerExpired()){
                 // no leader was elected, return a new candidate
-                System.out.println("Election timed out.");
+                NodeRunner.client.log("Election timed out.");
                 return new Candidate(this);
             }
             // else just keep running until one of these happens
@@ -57,7 +57,7 @@ public class Candidate extends Node {
      * @throws IOException
      */
     private void startElection() throws IOException {
-        System.out.println("Starting election...");
+        NodeRunner.client.log("Starting election...");
         term++;
         votesReceived = 1;
         votedFor = id;
@@ -97,7 +97,7 @@ public class Candidate extends Node {
             RequestVoteRespo.RequestVoteResponse rvr = (RequestVoteRespo.RequestVoteResponse)message.message;
             if (rvr.getVoteGranted()) {
                 votesReceived++;
-                System.out.println("Votes received: " + votesReceived);
+                NodeRunner.client.log("Votes received: " + votesReceived);
             }
             electionStarted = System.currentTimeMillis();
         }

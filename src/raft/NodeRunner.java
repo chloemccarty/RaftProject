@@ -2,6 +2,8 @@ package raft;
 
 import client.Client;
 import connect.*;
+
+import javax.swing.*;
 import java.io.IOException;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedDeque;
@@ -26,14 +28,23 @@ public class NodeRunner {
         client = new Client(false);
         client.start();
 
+
         // initialize the node (all nodes are followers when first initialized)
-        Node node = new Follower();
+        // while loop to prevent race condition due to threading
+        Node node;
+        while (true) {
+            if (client != null) {
+                node = new Follower();
+                break;
+            }
+        }
 
         while (true) {
             // run() will return the type of node we need for the next time it runs
             node = node.run();
             // update the client so we know whether to provide the leader or follower menu to the users
-            client.setLeader(node.getClass() == Leader.class);
+            boolean leader = (node.getClass() == Leader.class);
+            client.setLeader(leader);
 
 
 
