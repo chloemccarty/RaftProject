@@ -16,10 +16,8 @@ public class GUI extends Thread {
     public JCheckBox connectedCheck;
     public JPanel leaderButtons;
 
-    public GUI(boolean isLeader, boolean partitioned) {
-        leader = isLeader;
+    public GUI(boolean partitioned) {
         this.partitioned = partitioned;
-        checkStatus();
     }
 
     private class HelloWorldDisplay extends JPanel {
@@ -96,12 +94,15 @@ public class GUI extends Thread {
         window.setLocation(200, 150);
         window.setVisible(true);
 
-        checkStatus();
-        // TODO listen to toggle visibility of leader when status changes
+        // should be false the first time around
+        setLeaderStatus(false);
     }
 
-    public void checkStatus() {
-        leaderButtons.setVisible(leader);
+    public void setLeaderStatus(boolean leader) {
+        // avoid race condition of leaderButtons not initialized yet
+        if (leaderButtons != null)
+            leaderButtons.setVisible(leader);
+        // TODO: may need to repaint?
     }
 
 
