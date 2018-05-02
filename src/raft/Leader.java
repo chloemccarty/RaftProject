@@ -21,7 +21,7 @@ public class Leader extends Node {
         matchIndex = new int[numNodes];
         for (int i=0; i<numNodes; i++) {
             //Initialized to zero for each index, which corresponds to each node
-            matchIndex[i] = 0;
+            matchIndex[i] = -1;
         }
 
         //Store a nextIndex value for each node in the cluster. If nextIndex does not match the matchIndex value for a node, we must decrement
@@ -88,5 +88,24 @@ public class Leader extends Node {
             }
 
         }
+    }
+
+    @Override
+    public void apply() {
+        if (log.size() <= commitIndex+1) {
+            //skip and do nothing
+            return;
+        }
+
+        int N = commitIndex+1;
+        for (int i=0; i<numNodes; i++) {
+            while ( N < log.size() && log.get(matchIndex[i]).term != term) {
+                N++;
+            }
+        }
+
+
+
+
     }
 }
