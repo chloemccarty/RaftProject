@@ -81,6 +81,7 @@ public class GUI extends Thread {
         connectedCheck = new JCheckBox("Connected");
         connectedCheck.addActionListener(listener);
         buttonPanel.add(connectedCheck);
+        connectedCheck.setSelected(true);
 
 
         JPanel content = new JPanel();
@@ -94,14 +95,18 @@ public class GUI extends Thread {
         window.setLocation(200, 150);
         window.setVisible(true);
 
-        // should be false the first time around
-        setLeaderStatus(false);
     }
 
     public void setLeaderStatus(boolean leader) {
         // avoid race condition of leaderButtons not initialized yet
-        if (leaderButtons != null)
-            leaderButtons.setVisible(leader);
+        while (true) {
+            try {
+                leaderButtons.setVisible(leader);
+                break;
+            } catch (NullPointerException e) {
+                // wait and then try again
+            }
+        }
         // TODO: may need to repaint?
     }
 
