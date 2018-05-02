@@ -33,12 +33,9 @@ public class NodeRunner {
             // run() will return the type of node we need for the next time it runs
             node = node.run();
             // update the client so we know whether to provide the leader or follower menu to the users
-            if (node.getClass() == Leader.class) {
-                client.leader = true;
-            }
-            else {
-                client.leader = false;
-            }
+            client.setLeader(node.getClass() == Leader.class);
+
+
 
         }
     }
