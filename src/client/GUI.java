@@ -3,14 +3,18 @@ package client;
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
+import javax.swing.border.Border;
 
-public class GUI {
+public class GUI extends Thread {
 
+    public static boolean leader;
+    public static boolean partitioned;
     public static JTextField deleteIndex;
     public static JButton deleteSubmit;
     public static JTextField appendString;
     public static JButton appendSubmit;
     public static JCheckBox connectedCheck;
+    public static JPanel leaderButtons;
 
     private static class HelloWorldDisplay extends JPanel {
         public void paintComponent(Graphics g) {
@@ -44,9 +48,13 @@ public class GUI {
         }
     }
 
+    @Override
+    public void run() {
 
-    public static void main(String[] args) {
 
+    }
+
+    public static void init() {
         HelloWorldDisplay displayPanel = new HelloWorldDisplay();
 
         // create the display panel
@@ -63,20 +71,24 @@ public class GUI {
         deleteSubmit.addActionListener(listener);
 
         JPanel buttonPanel = new JPanel();
-        buttonPanel.setLayout(new GridLayout(3, 1));
+        buttonPanel.setLayout(new GridLayout(2, 1));
+        leaderButtons = new JPanel();
+        leaderButtons.setLayout(new GridLayout(2, 1));
         JPanel bp1 = new JPanel();
         bp1.add(appendString);
         bp1.add(appendSubmit);
-        buttonPanel.add(bp1);
+        leaderButtons.add(bp1);
         JPanel bp2 = new JPanel();
         bp2.add(deleteIndex);
         bp2.add(deleteSubmit);
-        buttonPanel.add(bp2);
+        leaderButtons.add(bp2);
+        buttonPanel.add(leaderButtons);
 
 
         connectedCheck = new JCheckBox("Connected");
         connectedCheck.addActionListener(listener);
         buttonPanel.add(connectedCheck);
+
 
         JPanel content = new JPanel();
         content.setLayout(new GridLayout(2,1));
@@ -89,5 +101,9 @@ public class GUI {
         window.setLocation(200, 150);
         window.setVisible(true);
 
+        if (!leader) {
+            leaderButtons.setVisible(false);
+        }
+        // TODO toggle visibility of leader when status changes
     }
 }

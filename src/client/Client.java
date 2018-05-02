@@ -16,20 +16,7 @@ public class Client extends Thread {
     public void run() {
         // TODO only run full menu the leader node
         // TODO only allow partitioning on the followers
-        try {
-            while (true) {
-                if (leader) {
-                    leaderMenu();
-                }
-                else {
-                    partitionOnly();
-                }
-                sleep(1000);
-            }
-        }
-        catch (InterruptedException e) {
-            Thread.currentThread().interrupt(); // very important
-        }
+        GUI.init();
 
     }
 
