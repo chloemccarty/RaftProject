@@ -106,7 +106,7 @@ public class GUI extends Thread {
         leaderCheck = new JCheckBox("Leader");
         leaderCheck.addActionListener(listener);
         leaderCheck.setSelected(leader);
-        //leaderCheck.setEnabled(false);
+        leaderCheck.setEnabled(false);
 
         checkPanel.add(connectedCheck);
         checkPanel.add(leaderCheck);
