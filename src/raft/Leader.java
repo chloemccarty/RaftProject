@@ -4,11 +4,10 @@ import client.Client;
 import connect.Network;
 
 public class Leader extends Node {
-    boolean forfeit = false;
 
     public Leader(Node node) {
         super(node);
-        System.out.println("Initializing as leader...");
+        NodeRunner.client.log("Initializing as leader...");
     }
 
     @Override
@@ -39,9 +38,11 @@ public class Leader extends Node {
             // send response
             Message m = checkForInput();
             if (m != null) {
-                System.out.println("Message received by leader");
+                NodeRunner.client.log("Message received by leader");
                 handleMessage(m);
+                // TODO find out why this isn't running
                 if (forfeit) {
+                    NodeRunner.client.log("Reverting to follower state");
                     return new Follower(this);
                 }
             }
