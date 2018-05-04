@@ -45,6 +45,11 @@ public class Follower extends Node {
                 confirm = false;
             }
 
+            else if (ae.getPrevLogIndex() == -1) {
+                //Log is empty and the message must be a heartbeat.
+                confirm = true;
+            }
+
             else if (log.get(ae.getPrevLogIndex()).term != ae.getPrevLogTerm() ) {
                 //return false
                 confirm = false;
@@ -73,7 +78,7 @@ public class Follower extends Node {
 
             //If the message was good, proceed to append entries.
             if (confirm) {
-                for (int i=log.size()-1; i<log.size() + ae.getEntriesCount() - 1; i++) {
+                for (int i=log.size(); i<log.size() + ae.getEntriesCount() - 1; i++) {
                     LogEntry entry = new LogEntry();
                     entry.term = ae.getTerm();
                     entry.cmd = ae.getEntries(i).getMessage();
