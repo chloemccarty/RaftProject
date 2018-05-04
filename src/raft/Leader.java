@@ -37,6 +37,8 @@ public class Leader extends Node {
 
     @Override
     public void handleMessage(Message message) {
+        // TODO add client message handling!
+
         // if term number is greater, immediately relinquish leadership
         if (message == null)
             return;
@@ -73,7 +75,7 @@ public class Leader extends Node {
     @Override
     public Node run() {
         while (true) {
-            //Handle updating commit index within the apply method
+            // Handle updating commit index within the apply method
             apply();
             commit();
 
@@ -111,8 +113,8 @@ public class Leader extends Node {
                 break;
         }
 
-        //Cycle through matchIndex array to see if N value is less than a majority of the nodes' index values.
-        //If true, then update commitIndex of leader to N.
+        // Cycle through matchIndex array to see if N value is less than a majority of the nodes' index values.
+        // If true, then update commitIndex of leader to N.
         int count=0;
         for (int i=0; i<numNodes; i++) {
             if (matchIndex[i]>=N) count++;
@@ -134,8 +136,8 @@ public class Leader extends Node {
                 elapsed = end-beg;
             }
 
-            //Send messages/heartbeat
-            //If last log index >= nextIndex for a follower, send appendEntries with index starting at nextIndex
+            // Send messages/heartbeat
+            // If last log index >= nextIndex for a follower, send appendEntries with index starting at nextIndex
             AppendEntries.AppendEntriesMessage.Builder builder = AppendEntries.AppendEntriesMessage.newBuilder();
             builder.setTerm(term);
             builder.setLeaderId(id);
@@ -145,6 +147,7 @@ public class Leader extends Node {
             else
                 builder.setPrevLogTerm(log.get(log.size()-1).term);
             builder.setLeaderCommit(commitIndex);
+
             // we need to send an empty message
             AppendEntries.AppendEntriesMessage.Entry.Builder entryBuilder = AppendEntries.AppendEntriesMessage.Entry.newBuilder();
             entryBuilder.setMessage("");
@@ -153,7 +156,7 @@ public class Leader extends Node {
 
            AppendEntries.AppendEntriesMessage message = builder.build();
 
-           for (int i=0; i < numNodes-1; i++) {
+           for (int i = 0; i < numNodes-1; i++) {
                Network.send(Message.MessageType.APPEND_ENTRIES, message, config.get(i));
            }
 
