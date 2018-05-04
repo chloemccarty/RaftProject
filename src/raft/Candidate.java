@@ -85,7 +85,8 @@ public class Candidate extends Node {
         if (message.type == Message.MessageType.APPEND_ENTRIES) {
             // TODO (later)
             // if we received valid append_Entries, forfeit candidacy
-            forfeit = true;
+            AppendEntries.AppendEntriesMessage ae = (AppendEntries.AppendEntriesMessage) message.message;
+            if (ae.getTerm() >= this.term) forfeit = true;
         }
         else if (message.type == Message.MessageType.APPEND_ENTRIES_RESPONSE) {
             // TODO (later)
