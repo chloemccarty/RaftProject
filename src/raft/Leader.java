@@ -140,12 +140,17 @@ public class Leader extends Node {
             builder.setTerm(term);
             builder.setLeaderId(id);
             builder.setPrevLogIndex(log.size()-1);
-            builder.setPrevLogTerm(log.get(log.size()-1).term);
+            if (log.size() == 0)
+                builder.setPrevLogTerm(-1);
+            else
+                builder.setPrevLogTerm(log.get(log.size()-1).term);
             builder.setLeaderCommit(commitIndex);
+            // we need to send an empty message
+            // builder.addEntries(index, value);
 
            AppendEntries.AppendEntriesMessage message = builder.build();
 
-           for (int i=0; i<numNodes; i++) {
+           for (int i=0; i < numNodes-1; i++) {
                Network.send(Message.MessageType.APPEND_ENTRIES, message, config.get(i));
            }
 
