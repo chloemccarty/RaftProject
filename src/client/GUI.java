@@ -47,11 +47,11 @@ public class GUI extends Thread {
             Object source = e.getSource();
             if (source == appendSubmit) {
                 String text = appendString.getText();
-                // send
+                // TODO put a message in the queue in NodeRunner for the leader to handle
             }
             else if (source == deleteSubmit) {
                 String text = deleteIndex.getText();
-                // send
+                // TODO put a message in the queue in NodeRunner for the leader to handle
             }
             else if (source == connectedCheck) {
                 boolean checked = connectedCheck.isSelected();
@@ -142,7 +142,7 @@ public class GUI extends Thread {
     }
 
     public void setLeaderStatus(boolean leader) {
-        // avoid race condition of leaderButtons not initialized yet
+        this.leader = leader;
         leaderCheck.setSelected(leader);
         leaderButtons.setVisible(leader);
         content.repaint();
