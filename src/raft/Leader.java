@@ -73,8 +73,10 @@ public class Leader extends Node {
     @Override
     public Node run() {
         while (true) {
-            //Need to handle updating commit index within the apply method
+            //Handle updating commit index within the apply method
             apply();
+            commit();
+            
             // check messages
             // react to messages
             // send response
@@ -90,8 +92,8 @@ public class Leader extends Node {
         }
     }
 
-    @Override
-    public void apply() {
+
+    public void commit() {
         if (log.size() <= commitIndex+1) {
             //skip and do nothing
             return;
@@ -99,13 +101,31 @@ public class Leader extends Node {
 
         int N = commitIndex+1;
         for (int i=0; i<numNodes; i++) {
-            while ( N < log.size() && log.get(matchIndex[i]).term != term) {
+            while ( N < log.size() && matchIndex[i] != N) {
                 N++;
             }
+
+            if (log.get(matchIndex[i]).term == term)
+                break;
+        }
+
+        //Cycle through matchIndex array to see if N value is less than a majority of the nodes' index values.
+        //If true, then update commitIndex of leader to N.
+        int count=0;
+        for (int i=0; i<numNodes; i++) {
+            if (matchIndex[i]>=N) count++;
+        }
+
+        if (count > numNodes/2)  {
+            //Set commitIndex equal to N
+            commitIndex = N;
         }
 
 
 
 
+
     }
+
+
 }

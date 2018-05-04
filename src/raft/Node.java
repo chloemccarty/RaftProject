@@ -70,8 +70,9 @@ public abstract class Node {
     /**
      * All nodes must apply new logs if commitIndex > lastApplied
      */
+
     public void apply() {
-        /*if (this.commitIndex > this.lastApplied) {
+        if (commitIndex > lastApplied) {
             //execute commands in log from (lastApplied+1) up through commitIndex
             for (int i=lastApplied; i<=commitIndex; i++) {
                 LogEntry entry = log.get(i);
@@ -92,7 +93,7 @@ public abstract class Node {
 
                 }
             }
-        }*/
+        }
     }
 
     /**

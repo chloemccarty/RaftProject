@@ -164,9 +164,9 @@ public class Follower extends Node {
         }
     }
 
-    @Override
+   /* @Override
     public void apply() {
-        if (this.commitIndex > this.lastApplied) {
+        if (commitIndex > lastApplied) {
             //execute commands in log from (lastApplied+1) up through commitIndex
             for (int i=lastApplied; i<=commitIndex; i++) {
                 LogEntry entry = log.get(i);
@@ -188,7 +188,7 @@ public class Follower extends Node {
                 }
             }
         }
-    }
+    }*/
 
     /**
      * Tests whether the election has timed out or not
