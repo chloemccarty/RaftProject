@@ -139,8 +139,8 @@ public class Leader extends Node {
             AppendEntries.AppendEntriesMessage.Builder builder = AppendEntries.AppendEntriesMessage.newBuilder();
             builder.setTerm(term);
             builder.setLeaderId(id);
-            builder.setPrevLogIndex(lastApplied);
-            builder.setPrevLogTerm(log.get(lastApplied).term);
+            builder.setPrevLogIndex(log.size()-1);
+            builder.setPrevLogTerm(log.get(log.size()-1).term);
             builder.setLeaderCommit(commitIndex);
 
            AppendEntries.AppendEntriesMessage message = builder.build();
