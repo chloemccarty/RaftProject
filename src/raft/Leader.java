@@ -76,7 +76,7 @@ public class Leader extends Node {
             //Handle updating commit index within the apply method
             apply();
             commit();
-            
+
             // check messages
             // react to messages
             // send response
@@ -88,6 +88,8 @@ public class Leader extends Node {
                     return new Follower(this);
                 }
             }
+
+            sendHeartbeats();
 
         }
     }
@@ -120,12 +122,36 @@ public class Leader extends Node {
             //Set commitIndex equal to N
             commitIndex = N;
         }
-
-
-
-
-
     }
 
+
+    public void sendHeartbeats() {
+        while (true) {
+            long elapsed = 0;
+            long beg = System.currentTimeMillis();
+            while (elapsed <= 100) {
+                long end = System.currentTimeMillis();
+                elapsed = end-beg;
+            }
+
+            //Send messages/heartbeat
+            //If last log index >= nextIndex for a follower, send appendEntries with index starting at nextIndex
+            AppendEntries.AppendEntriesMessage.Builder builder = AppendEntries.AppendEntriesMessage.newBuilder();
+            builder.setTerm(term);
+            builder.setLeaderId(id);
+            builder.setPrevLogIndex(lastApplied);
+            builder.setPrevLogTerm(log.get(lastApplied).term);
+            builder.setLeaderCommit(commitIndex);
+
+           AppendEntries.AppendEntriesMessage message = builder.build();
+
+           for (int i=0; i<numNodes; i++) {
+               Network.send(Message.MessageType.APPEND_ENTRIES, message, config.get(i));
+           }
+
+
+        }
+
+    }
 
 }
