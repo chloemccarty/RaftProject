@@ -146,7 +146,10 @@ public class Leader extends Node {
                 builder.setPrevLogTerm(log.get(log.size()-1).term);
             builder.setLeaderCommit(commitIndex);
             // we need to send an empty message
-            // builder.addEntries(index, value);
+            AppendEntries.AppendEntriesMessage.Entry.Builder entryBuilder = AppendEntries.AppendEntriesMessage.Entry.newBuilder();
+            entryBuilder.setMessage("");
+            AppendEntries.AppendEntriesMessage.Entry entry = entryBuilder.build();
+            builder.addEntries(lastApplied, entry);
 
            AppendEntries.AppendEntriesMessage message = builder.build();
 
