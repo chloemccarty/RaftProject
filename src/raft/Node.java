@@ -47,6 +47,13 @@ public abstract class Node {
         this.log = new ArrayList<LogEntry>();
     }
 
+    /**
+     * Everytime we increase the term, we should reset votedFor to -1.
+     */
+    public void setTerm(int newTerm) {
+        this.term = newTerm;
+        this.votedFor = -1;
+    }
 
     public Message checkForInput() {
         // check for input
