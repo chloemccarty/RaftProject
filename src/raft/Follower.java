@@ -122,11 +122,23 @@ public class Follower extends Node {
         RequestVoteRespo.RequestVoteResponse.Builder builder = RequestVoteRespo.RequestVoteResponse.newBuilder();
         if (rvm.getTerm() >= this.term && this.votedFor == -1) {
             // we have not voted for anyone, vote for this candidate
+            NodeRunner.client.log("Voting for Candidate");
             this.votedFor = rvm.getCandidateId();
             builder.setVoteGranted(true);
+            setTerm(rvm.getTerm());
             builder.setTerm(this.term);
 
-        } else {
+        }
+        else if (rvm.getTerm() >= this.term) {
+            NodeRunner.client.log("Refusing to vote for Candidate. My term: " + this.term + ". Their term: " + rvm.getTerm() + ". Voted for: " + this.votedFor);
+            // update our term
+            setTerm(rvm.getTerm());
+            builder.setVoteGranted(false);
+            builder.setTerm(this.term);
+        }
+        else {
+            NodeRunner.client.log("Refusing to vote for Candidate. My term: " + this.term + ". Their term: " + rvm.getTerm() + ". Voted for: " + this.votedFor);
+            // update our term
             builder.setVoteGranted(false);
             builder.setTerm(this.term);
         }
@@ -161,6 +173,7 @@ public class Follower extends Node {
                 System.out.println("Heart-beat timer expired");
                 return new Candidate(this);
             }
+
         }
     }
 
