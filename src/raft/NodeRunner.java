@@ -3,12 +3,9 @@ package raft;
 import client.Client;
 import connect.*;
 
-import javax.swing.*;
 import java.io.IOException;
 import java.util.Queue;
-import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.concurrent.SynchronousQueue;
 
 public class NodeRunner {
 

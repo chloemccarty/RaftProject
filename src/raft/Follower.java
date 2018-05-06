@@ -28,24 +28,24 @@ public class Follower extends Node {
     public void handleMessage(Message message) {
         if (message.type == Message.MessageType.APPEND_ENTRIES) {
             // TODO (later) we must respond appropriately to the leader
-            //Question: Are able to contain an array of log entries in our message? Or are we only implementing
+            // Question: Are able to contain an array of log entries in our message? Or are we only implementing
             // a one entry per message system?
             AppendEntries.AppendEntriesMessage ae = (AppendEntries.AppendEntriesMessage) message.message;
 
             if (ae.getTerm() < this.term) {
-                //Ignore the message and return false, decrement nextIndex on the leader server
+                // Ignore the message and return false, decrement nextIndex on the leader server
                 confirm = false;
             }
             else if (ae.getPrevLogIndex() == -1 || ae.getEntriesCount() == 0) {
-                //Log is empty and the message must be a heartbeat.
+                // Log is empty and the message must be a heartbeat.
                 confirm = true;
             }
             else if (log.get(ae.getPrevLogIndex()).term != ae.getPrevLogTerm() ) {
-                //return false
+                // return false
                 confirm = false;
             }
 
-            //If the message was good, proceed to append entries.
+            // If the message was good, proceed to append entries.
             if (confirm) {
                 for (int i=log.size(); i<log.size() + ae.getEntriesCount() - 1; i++) {
                     LogEntry entry = new LogEntry();
@@ -85,33 +85,47 @@ public class Follower extends Node {
     @Override
     public void respondToRequestVote(Message message) {
         RequestVote.RequestVoteMessage rvm = (RequestVote.RequestVoteMessage) message.message;
-        // TODO also check to see if candidate's log is at least as up-to-date as our own
-        // TODO assigned to Elijah
         RequestVoteRespo.RequestVoteResponse.Builder builder = RequestVoteRespo.RequestVoteResponse.newBuilder();
-        if (rvm.getTerm() >= this.term && this.votedFor == -1) {
+
+        if (rvm.getTerm() >= this.term &&
+                this.votedFor == -1 &&
+                rvm.getLastLogTerm() >= this.log.get(this.log.size()-1).term &&
+                rvm.getLastLogIndex() >= this.lastApplied) {
+
             // we have not voted for anyone, vote for this candidate
-            NodeRunner.client.log("Voting for Candidate");
             this.votedFor = rvm.getCandidateId();
+            NodeRunner.client.log("Voting for Candidate " + this.votedFor);
             builder.setVoteGranted(true);
             setTerm(rvm.getTerm());
             builder.setTerm(this.term);
+        } else if (rvm.getTerm() < this.term) {
+            if (this.votedFor == -1) {
+                NodeRunner.client.log("Refusing to vote for Candidate. My term: " + this.term +
+                        ". Their term: " + rvm.getTerm() + ". Voted for: No one");
+            } else {
+                NodeRunner.client.log("Refusing to vote for Candidate. My term: " + this.term +
+                        ". Their term: " + rvm.getTerm() + ". Voted for: " + this.votedFor);
+            }
 
-        }
-        else if (rvm.getTerm() >= this.term) {
-            NodeRunner.client.log("Refusing to vote for Candidate. My term: " + this.term + ". Their term: " + rvm.getTerm() + ". Voted for: " + this.votedFor);
+            // I don't think we need to update our term if theirs is smaller than ours,
+            // we need to set their term to ours?
+            // setTerm(rvm.getTerm());
+            builder.setVoteGranted(false);
+            builder.setTerm(this.term);
+        } else {
+            if (this.votedFor == -1) {
+                NodeRunner.client.log("Refusing to vote for Candidate. My term: " + this.term +
+                        ". Their term: " + rvm.getTerm() + ". Voted for: No one");
+            } else {
+                NodeRunner.client.log("Refusing to vote for Candidate. My term: " + this.term +
+                        ". Their term: " + rvm.getTerm() + ". Voted for: " + this.votedFor);
+            }
             // update our term
-            setTerm(rvm.getTerm());
             builder.setVoteGranted(false);
             builder.setTerm(this.term);
         }
-        else {
-            NodeRunner.client.log("Refusing to vote for Candidate. My term: " + this.term + ". Their term: " + rvm.getTerm() + ". Voted for: " + this.votedFor);
-            // update our term
-            builder.setVoteGranted(false);
-            builder.setTerm(this.term);
-        }
+
         RequestVoteRespo.RequestVoteResponse rvr = builder.build();
-
         String candidateIp = config.get(rvm.getCandidateId());
         Network.send(REQUEST_VOTES_RESPONSE, rvr, candidateIp);
     }
@@ -120,8 +134,7 @@ public class Follower extends Node {
     public Node run() {
         apply();
 
-        // TODO not sure if anything else needs to be in this while loop
-        // followers only (1) respond to AppendEntries or
+        // Followers only (1) respond to AppendEntries/RequestVotes or
         // (2) become a candidate if an election timeout occurs
         while (true) {
             Message message = checkForInput();
@@ -133,7 +146,7 @@ public class Follower extends Node {
                 startTime = System.currentTimeMillis();
             }
 
-            //Need to commit and execute log entries after handling the message.
+            // Need to commit and execute log entries after handling the message.
 
             // no AppendEntries or RequestVotes received and timeout occurred,
             // convert to candidate
