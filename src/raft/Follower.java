@@ -70,8 +70,9 @@ public class Follower extends Node {
 
 
             if (ae.getLeaderCommit() > this.commitIndex) {
-                this.commitIndex = ae.getLeaderCommit();
-                //this.commitIndex = log.size() - 1;   // This wsa written in the paper; didn't understand it: min(this.commitIndex, log.size()-1);
+                // this.commitIndex = ae.getLeaderCommit();
+                // this.commitIndex = log.size() - 1;
+                this.commitIndex = Math.min(this.commitIndex, log.size()-1);
             }
 
             //  TODO build a response message to leader
