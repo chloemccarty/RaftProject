@@ -2,6 +2,8 @@ package raft;
 
 import client.Client;
 import connect.Network;
+import sun.nio.ch.Net;
+import sun.rmi.runtime.Log;
 
 import java.util.HashMap;
 
@@ -72,11 +74,38 @@ public class Leader extends Node {
             // (unless it's just coming in from our previous election
         }
         else if (message.type == Message.MessageType.CLIENT_APPEND) {
-            // set the term
             message.clientCmd.term = this.term;
+
+            // Create a log entry from the CLIENT_APPEND message and add it to the leader's log
+            LogEntry le = new LogEntry();
+            le.term = this.term;
+            le.cmd = message.clientCmd.cmd;
+            this.log.add(le);
+
+            // Create an APPEND_ENTRIES message to send to all other nodes
+            AppendEntries.AppendEntriesMessage.Builder builder = AppendEntries.AppendEntriesMessage.newBuilder();
+            builder.setTerm(this.term);
+            builder.setLeaderId(this.id);
+            builder.setPrevLogIndex(lastApplied);
+            builder.setLeaderCommit(commitIndex);
+
+            AppendEntries.AppendEntriesMessage.Entry.Builder entryBuilder = AppendEntries.AppendEntriesMessage.Entry.newBuilder();
+            entryBuilder.setTermNumber(this.term);
+            entryBuilder.setMessage(message.clientCmd.cmd);
+            AppendEntries.AppendEntriesMessage.Entry entry = entryBuilder.build();
+
+            builder.setEntries(this.log.size(), entry);
+
+            AppendEntries.AppendEntriesMessage mes = builder.build();
+
+            for(int i=0; i<numNodes-1; i++){
+                Network.send(Message.MessageType.APPEND_ENTRIES, mes, config.get(i));
+            }
+
             // TODO: handle these messages. Assigned to Joel / Alex
             // these messages came from the client and contain a LogEntry called clientCmd
             // we need to add that to our own log and send it along to our followers
+
         }
         else if (message.type == Message.MessageType.CLIENT_DELETE) {
             message.clientCmd.term = this.term;
