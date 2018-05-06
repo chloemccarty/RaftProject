@@ -87,13 +87,23 @@ public abstract class Node {
 
                 if (command[0] == "1") {
                     //execute append command. Append takes a string input to append to database (which is one big string).
-                    database.concat(command[1]);
+                    database = database.concat(command[1]);
                 }
                 else {
                     //execute delete command. Delete takes an int input to tell from which position to begin deleting
-                    //delete(entry.cmd.split(",")[1]);
                     StringBuilder sb = new StringBuilder(database);
-                    sb.delete(Integer.parseInt(command[1]), database.length());
+                    try {
+                        int index = Integer.parseInt(command[1]);
+                        if (index > 0 && index < database.length())
+                            sb.delete(index, database.length());
+                        else
+                            NodeRunner.client.log("Illegal index; ignoring client delete command");
+                        database = sb.toString();
+                    }
+                    catch (NumberFormatException e) {
+                        NodeRunner.client.log("Could not parse number from input. Ignoring client delete command.");
+                    }
+
                 }
             }
         }
@@ -112,7 +122,6 @@ public abstract class Node {
         List<String> ips = Files.readAllLines(Paths.get("Config.txt"));
         config = new ArrayList<>();
         for (String ip : ips) {
-            // TODO change to .equals()
             if (!thisIP.equals(ip)) {
                 NodeRunner.client.log("adding node at ip " + ip);
                 config.add(ip);

@@ -32,7 +32,6 @@ public class Candidate extends Node {
                 handleMessage(msg);
             }
 
-
             if (votesReceived > (numNodes + 1) / 2) {
                 // return a leader Node
                 NodeRunner.client.log("Votes needed to win: " + (numNodes + 1) / 2);
@@ -89,12 +88,12 @@ public class Candidate extends Node {
             if (ae.getTerm() >= this.term) forfeit = true;
         }
         else if (message.type == Message.MessageType.APPEND_ENTRIES_RESPONSE) {
-            // TODO (later)
+            // ignore (shouldn't be receiving"
         }
         else if (message.type == Message.MessageType.REQUEST_VOTES) {
             respondToRequestVote(message);
         }
-        if (message.type == Message.MessageType.REQUEST_VOTES_RESPONSE) {
+        else if (message.type == Message.MessageType.REQUEST_VOTES_RESPONSE) {
             RequestVoteRespo.RequestVoteResponse rvr = (RequestVoteRespo.RequestVoteResponse)message.message;
             if (rvr.getVoteGranted()) {
                 votesReceived++;
