@@ -61,7 +61,6 @@ public abstract class Node {
             // pull a message out
             return messageQueue.poll();
         }
-
         return null;
     }
 
@@ -90,14 +89,11 @@ public abstract class Node {
                     //execute append command. Append takes a string input to append to database (which is one big string).
                     database.concat(command[1]);
                 }
-
                 else {
                     //execute delete command. Delete takes an int input to tell from which position to begin deleting
                     //delete(entry.cmd.split(",")[1]);
                     StringBuilder sb = new StringBuilder(database);
                     sb.delete(Integer.parseInt(command[1]), database.length());
-
-
                 }
             }
         }
@@ -107,23 +103,23 @@ public abstract class Node {
      * Read IP addresses of nodes from config file.
      */
     public void initConfig() throws IOException {
-        System.out.println("Configuring cluster...");
+        NodeRunner.client.log("Configuring cluster...");
 
         // be sure not to add self to list of nodes to send to
         String thisIP = InetAddress.getLocalHost().getHostAddress();
-        System.out.println("Local IP address: " + thisIP);
+        NodeRunner.client.log("Local IP address: " + thisIP);
 
         List<String> ips = Files.readAllLines(Paths.get("Config.txt"));
         config = new ArrayList<>();
         for (String ip : ips) {
             // TODO change to .equals()
             if (!thisIP.equals(ip)) {
-                System.out.println("adding node at ip " + ip);
+                NodeRunner.client.log("adding node at ip " + ip);
                 config.add(ip);
             }
         }
         numNodes = config.size() + 1; // include ourself in the count
-        System.out.println(numNodes + " nodes in cluster");
+        NodeRunner.client.log(numNodes + " nodes in cluster");
     }
 
     public void respondToRequestVote(Message message) {
@@ -139,7 +135,7 @@ public abstract class Node {
         RequestVoteRespo.RequestVoteResponse.Builder builder = RequestVoteRespo.RequestVoteResponse.newBuilder();
         if (forfeit) {
             builder.setVoteGranted(true);
-            System.out.println("Voting for candidate: " + rvm.getCandidateId());
+            NodeRunner.client.log("Voting for candidate: " + rvm.getCandidateId());
         } else {
             builder.setVoteGranted(false);
         }

@@ -1,18 +1,13 @@
 package raft;
 
-import client.Client;
 import connect.Network;
 
 import java.io.IOException;
 
-import static raft.Message.MessageType.APPEND_ENTRIES_RESPONSE;
 import static raft.Message.MessageType.REQUEST_VOTES_RESPONSE;
 
 public class Follower extends Node {
 
-    // the type of this will depend on how we implement time keeping
-    // i decided to make it a long since System.currentTimeMillis() returns a long
-    // and I imagine we'll use this method in our implementation
     long startTime;
     long electionTimeout;
     boolean confirm = true;
@@ -20,15 +15,12 @@ public class Follower extends Node {
     public Follower() throws IOException {
         initConfig();
         votedFor = -1;
-        System.out.println("Initializing node as follower...");
+        NodeRunner.client.log("Initializing node as follower...");
     }
 
     public Follower(Node node) {
         super(node);
         startTime = System.currentTimeMillis();
-
-        // used same set up as in the Candidate class so this may need
-        // configured as well
         electionTimeout = (long) (Math.random() + 1) * 200 + 500;
     }
 
@@ -44,19 +36,14 @@ public class Follower extends Node {
                 //Ignore the message and return false, decrement nextIndex on the leader server
                 confirm = false;
             }
-
-            else if (ae.getPrevLogIndex() == -1) {
+            else if (ae.getPrevLogIndex() == -1 || ae.getEntriesCount() == 0) {
                 //Log is empty and the message must be a heartbeat.
                 confirm = true;
             }
-
             else if (log.get(ae.getPrevLogIndex()).term != ae.getPrevLogTerm() ) {
                 //return false
                 confirm = false;
             }
-
-            //This is supposed to check if it is a heartbeat.
-            else if (ae.getEntriesCount() == 0) confirm = true;
 
             //If the message was good, proceed to append entries.
             if (confirm) {
@@ -75,7 +62,7 @@ public class Follower extends Node {
                 this.commitIndex = Math.min(this.commitIndex, log.size()-1);
             }
 
-            //  TODO build a response message to leader
+            //  build a response message to leader
             AppendEntries.Response.Builder builder = AppendEntries.Response.newBuilder();
             builder.setTerm(this.term);
             builder.setSuccess(confirm);
@@ -87,7 +74,7 @@ public class Follower extends Node {
             confirm = true;
 
         } else if (message.type == Message.MessageType.APPEND_ENTRIES_RESPONSE) {
-            // TODO (later)
+            // ignore
         } else if (message.type == Message.MessageType.REQUEST_VOTES) {
             respondToRequestVote(message);
         } else if (message.type == Message.MessageType.REQUEST_VOTES_RESPONSE) {
@@ -98,8 +85,7 @@ public class Follower extends Node {
     @Override
     public void respondToRequestVote(Message message) {
         RequestVote.RequestVoteMessage rvm = (RequestVote.RequestVoteMessage) message.message;
-        // TODO check to see if candidate's log is at least as up-to-date
-        // as our own (later)
+        // TODO check to see if candidate's log is at least as up-to-date as our own
         RequestVoteRespo.RequestVoteResponse.Builder builder = RequestVoteRespo.RequestVoteResponse.newBuilder();
         if (rvm.getTerm() >= this.term && this.votedFor == -1) {
             // we have not voted for anyone, vote for this candidate

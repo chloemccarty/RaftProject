@@ -14,7 +14,7 @@ public class Candidate extends Node {
 
     public Candidate(Node node) {
         super(node);
-        System.out.println("Initializing node as candidate...");
+        NodeRunner.client.log("Initializing node as candidate...");
         electionStarted = System.currentTimeMillis();
         // this will need to be configured to be in a nicer range probably
         electionTimeout = (long) (Math.random() + 1) * 200 + 500;
@@ -28,7 +28,7 @@ public class Candidate extends Node {
         while (true) {
             Message msg = checkForInput();
             if (msg != null) {
-                System.out.println("Message received by candidate.");
+                NodeRunner.client.log("Message received by candidate.");
                 handleMessage(msg);
             }
 
