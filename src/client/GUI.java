@@ -59,7 +59,7 @@ public class GUI extends Thread {
                 String text = deleteIndex.getText();
                 LogEntry le = new LogEntry();
                 le.cmd = "0," + text;
-                NodeRunner.messageQueue.add(new Message(Message.MessageType.CLIENT_DELETE, le));
+                NodeRunner.messageQueue.add(new Message(Message.MessageType.CLIENT_APPEND, le));
                 deleteIndex.setText("");
             }
             else if (source == connectedCheck) {

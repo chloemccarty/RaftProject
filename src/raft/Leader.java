@@ -97,13 +97,10 @@ public class Leader extends Node {
 
             AppendEntries.AppendEntriesMessage mes = builder.build();
 
-            for(int i=0; i<numNodes-1; i++) {
+            for (int i = 0; i < numNodes - 1; i++) {
                 Network.send(Message.MessageType.APPEND_ENTRIES, mes, config.get(i));
             }
 
-        }
-        else if (message.type == Message.MessageType.CLIENT_DELETE) {
-            // This will be redundant. don't need it.
         }
 
     }
