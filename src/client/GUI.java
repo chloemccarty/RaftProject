@@ -53,13 +53,14 @@ public class GUI extends Thread {
                 LogEntry le = new LogEntry();
                 le.cmd = "1," + text;
                 NodeRunner.messageQueue.add(new Message(Message.MessageType.CLIENT_APPEND, le));
+                appendString.setText("");
             }
             else if (source == deleteSubmit) {
                 String text = deleteIndex.getText();
                 LogEntry le = new LogEntry();
                 le.cmd = "0," + text;
                 NodeRunner.messageQueue.add(new Message(Message.MessageType.CLIENT_DELETE, le));
-                // TODO put a message in the queue in NodeRunner for the leader to handle
+                deleteIndex.setText("");
             }
             else if (source == connectedCheck) {
                 boolean checked = connectedCheck.isSelected();
