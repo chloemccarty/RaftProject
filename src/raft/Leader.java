@@ -74,13 +74,12 @@ public class Leader extends Node {
             // (unless it's just coming in from our previous election
         }
         else if (message.type == Message.MessageType.CLIENT_APPEND) {
+            // these messages came from the client and contain a LogEntry called clientCmd
+            // we need to add that to our own log and send it along to our followers
+
             message.clientCmd.term = this.term;
 
-            // Create a log entry from the CLIENT_APPEND message and add it to the leader's log
-            LogEntry le = new LogEntry();
-            le.term = this.term;
-            le.cmd = message.clientCmd.cmd;
-            this.log.add(le);
+            this.log.add(message.clientCmd);
 
             // Create an APPEND_ENTRIES message to send to all other nodes
             AppendEntries.AppendEntriesMessage.Builder builder = AppendEntries.AppendEntriesMessage.newBuilder();
@@ -98,19 +97,13 @@ public class Leader extends Node {
 
             AppendEntries.AppendEntriesMessage mes = builder.build();
 
-            for(int i=0; i<numNodes-1; i++){
+            for(int i=0; i<numNodes-1; i++) {
                 Network.send(Message.MessageType.APPEND_ENTRIES, mes, config.get(i));
             }
 
-            // TODO: handle these messages. Assigned to Joel / Alex
-            // these messages came from the client and contain a LogEntry called clientCmd
-            // we need to add that to our own log and send it along to our followers
-
         }
         else if (message.type == Message.MessageType.CLIENT_DELETE) {
-            message.clientCmd.term = this.term;
-            // TODO: handle these messages. Assigned to Joel / Alex
-
+            // This will be redundant. don't need it.
         }
 
     }
