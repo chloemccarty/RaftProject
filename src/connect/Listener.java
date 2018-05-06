@@ -32,29 +32,27 @@ public class Listener extends Thread {
                 boolean partitioned = NodeRunner.client.partitioned();
 
                 if (msgType == 0) {
-                    
-                        // TODO read appendEntries message from in
+
+                    RequestVote.RequestVoteMessage ae = RequestVote.RequestVoteMessage.parseFrom(in);
                     // if it's not partitioned, add it to the queue
                     // That is, we're ignoring incoming messages if we are currently partitioned
                     if (!partitioned) {
-                        NodeRunner.messageQueue.add(new Message(Message.MessageType.APPEND_ENTRIES, null));
+                        NodeRunner.messageQueue.add(new Message(Message.MessageType.APPEND_ENTRIES, ae));
                     }
                 }
                 else if (msgType == 1) {
-                    // TODO read appendEntriesResponse message from in
+                    RequestVote.RequestVoteMessage aer = RequestVote.RequestVoteMessage.parseFrom(in);
                     if (!partitioned) {
-                        NodeRunner.messageQueue.add(new Message(Message.MessageType.APPEND_ENTRIES_RESPONSE, null));
+                        NodeRunner.messageQueue.add(new Message(Message.MessageType.APPEND_ENTRIES_RESPONSE, aer));
                     }
                 }
                 else if (msgType == 2) {
-                    // TODO read in RequestVotes object from in
                     RequestVote.RequestVoteMessage rv = RequestVote.RequestVoteMessage.parseFrom(in);
                     if (!partitioned) {
                         NodeRunner.messageQueue.add(new Message(Message.MessageType.REQUEST_VOTES, rv));
                     }
                 }
                 else if (msgType == 3) {
-                    // TODO read in RequestVotesResponse object from in
                     RequestVoteRespo.RequestVoteResponse rvr = RequestVoteRespo.RequestVoteResponse.parseFrom(in);
                     if (!partitioned) {
                         NodeRunner.messageQueue.add(new Message(Message.MessageType.REQUEST_VOTES_RESPONSE, rvr));
