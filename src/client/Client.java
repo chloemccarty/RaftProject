@@ -15,8 +15,6 @@ public class Client extends Thread {
         System.out.println(s);
         if (guiClient.content != null)
             guiClient.content.repaint();
-        else
-            System.out.println("WARNING: CONTENT NULL");
     }
 
     public void setLeader(boolean lead) {

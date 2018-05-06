@@ -4,7 +4,6 @@ import java.awt.*;
 import java.awt.event.*;
 import java.lang.reflect.InvocationTargetException;
 import javax.swing.*;
-import javax.swing.border.Border;
 
 public class GUI extends Thread {
 
