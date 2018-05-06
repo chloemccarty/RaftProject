@@ -88,8 +88,7 @@ public class Candidate extends Node {
             if (ae.getTerm() >= this.term) forfeit = true;
         }
         else if (message.type == Message.MessageType.APPEND_ENTRIES_RESPONSE) {
-            AppendEntries.Response aer = (AppendEntries.Response) message.message;
-            // TODO (later)
+            // ignore (shouldn't be receiving"
         }
         else if (message.type == Message.MessageType.REQUEST_VOTES) {
             respondToRequestVote(message);
