@@ -67,9 +67,23 @@ public class Leader extends Node {
         else if (message.type == Message.MessageType.REQUEST_VOTES) {
             respondToRequestVote(message);
         }
-        if (message.type == Message.MessageType.REQUEST_VOTES_RESPONSE) {
+        else if (message.type == Message.MessageType.REQUEST_VOTES_RESPONSE) {
             // shouldn't even get this message. We shouldn't have sent out a ReQuestVotes as a leader
+            // (unless it's just coming in from our previous election
         }
+        else if (message.type == Message.MessageType.CLIENT_APPEND) {
+            // set the term
+            message.clientCmd.term = this.term;
+            // TODO: handle these messages. Assigned to Joel / Alex
+            // these messages came from the client and contain a LogEntry called clientCmd
+            // we need to add that to our own log and send it along to our followers
+        }
+        else if (message.type == Message.MessageType.CLIENT_DELETE) {
+            message.clientCmd.term = this.term;
+            // TODO: handle these messages. Assigned to Joel / Alex
+
+        }
+
     }
 
     @Override

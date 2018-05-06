@@ -1,9 +1,6 @@
 package connect;
 
-import raft.Message;
-import raft.NodeRunner;
-import raft.RequestVote;
-import raft.RequestVoteRespo;
+import raft.*;
 
 import java.io.DataInputStream;
 import java.io.IOException;
@@ -33,7 +30,7 @@ public class Listener extends Thread {
 
                 if (msgType == 0) {
 
-                    RequestVote.RequestVoteMessage ae = RequestVote.RequestVoteMessage.parseFrom(in);
+                    AppendEntries.AppendEntriesMessage ae = AppendEntries.AppendEntriesMessage.parseFrom(in);
                     // if it's not partitioned, add it to the queue
                     // That is, we're ignoring incoming messages if we are currently partitioned
                     if (!partitioned) {
@@ -41,7 +38,7 @@ public class Listener extends Thread {
                     }
                 }
                 else if (msgType == 1) {
-                    RequestVote.RequestVoteMessage aer = RequestVote.RequestVoteMessage.parseFrom(in);
+                    AppendEntries.Response aer = AppendEntries.Response.parseFrom(in);
                     if (!partitioned) {
                         NodeRunner.messageQueue.add(new Message(Message.MessageType.APPEND_ENTRIES_RESPONSE, aer));
                     }

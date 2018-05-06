@@ -85,7 +85,8 @@ public class Follower extends Node {
     @Override
     public void respondToRequestVote(Message message) {
         RequestVote.RequestVoteMessage rvm = (RequestVote.RequestVoteMessage) message.message;
-        // TODO check to see if candidate's log is at least as up-to-date as our own
+        // TODO also check to see if candidate's log is at least as up-to-date as our own
+        // TODO assigned to Elijah
         RequestVoteRespo.RequestVoteResponse.Builder builder = RequestVoteRespo.RequestVoteResponse.newBuilder();
         if (rvm.getTerm() >= this.term && this.votedFor == -1) {
             // we have not voted for anyone, vote for this candidate

@@ -1,5 +1,9 @@
 package client;
 
+import raft.Message;
+import raft.NodeRunner;
+import raft.LogEntry;
+
 import java.awt.*;
 import java.awt.event.*;
 import java.lang.reflect.InvocationTargetException;
@@ -46,10 +50,15 @@ public class GUI extends Thread {
             Object source = e.getSource();
             if (source == appendSubmit) {
                 String text = appendString.getText();
-                // TODO put a message in the queue in NodeRunner for the leader to handle
+                LogEntry le = new LogEntry();
+                le.cmd = "1," + text;
+                NodeRunner.messageQueue.add(new Message(Message.MessageType.CLIENT_APPEND, le));
             }
             else if (source == deleteSubmit) {
                 String text = deleteIndex.getText();
+                LogEntry le = new LogEntry();
+                le.cmd = "0," + text;
+                NodeRunner.messageQueue.add(new Message(Message.MessageType.CLIENT_DELETE, le));
                 // TODO put a message in the queue in NodeRunner for the leader to handle
             }
             else if (source == connectedCheck) {
