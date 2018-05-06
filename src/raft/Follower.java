@@ -58,24 +58,6 @@ public class Follower extends Node {
             //This is supposed to check if it is a heartbeat.
             else if (ae.getEntriesCount() == 0) confirm = true;
 
-           /* else if (ae.hasPrevLogIndex() && log.size()>0 && log.size()>ae.getPrevLogIndex()+1){ //Not sure if we need this last term here.
-                //Simple check to avoid adding errors with entries that DNE as well as to see if we are dealing with an index
-                //in the log that is not updated to the current leader. If not true, continue to
-                //the if (confirm) statement where it will simply append all entries.
-                //Go through all the entries in the message and check if any entry from the message's term doesn't match
-                for (int i=ae.getPrevLogIndex()+1; i<log.size() + ae.getEntriesCount() - 1; i++) {
-                    if(log.size() < i) break; //avoid checking out of bounds of the log entry array.
-                    else if (log.get(i).term != ae.getTerm()) {
-                        //remove existing entry and all that follow, then update the log
-                        confirm = true;
-                        for (int j=i; j<log.size(); j++) {
-                            log.remove(j);
-                        }
-                        break;
-                    }
-                }
-            }*/
-
             //If the message was good, proceed to append entries.
             if (confirm) {
                 for (int i=log.size(); i<log.size() + ae.getEntriesCount() - 1; i++) {
@@ -85,14 +67,7 @@ public class Follower extends Node {
                     log.add(entry);
                 }
             }
-           /* else if (log.get(ae.getPrevLogIndex() + 1).term != ae.getTerm()) {
-                //Delete the log's existing entry and all that follow it, then update the log (append entries not already in the log)
-                for (int i=ae.getPrevLogIndex(); i<log.size(); i++) {
-                    log.remove(i);
-                    log.add(ae.)
-                }
 
-            }*/
 
             if (ae.getLeaderCommit() > this.commitIndex) {
                 this.commitIndex = ae.getLeaderCommit();
@@ -182,31 +157,6 @@ public class Follower extends Node {
         }
     }
 
-   /* @Override
-    public void apply() {
-        if (commitIndex > lastApplied) {
-            //execute commands in log from (lastApplied+1) up through commitIndex
-            for (int i=lastApplied; i<=commitIndex; i++) {
-                LogEntry entry = log.get(i);
-                String[] command = new String[2];
-                command = entry.cmd.split(",");
-
-                if (command[0] == "1") {
-                    //execute append command. Append takes a string input to append to database (which is one big string).
-                    database.concat(command[1]);
-                }
-
-                else {
-                    //execute delete command. Delete takes an int input to tell from which position to begin deleting
-                    //delete(entry.cmd.split(",")[1]);
-                    StringBuilder sb = new StringBuilder(database);
-                    sb.delete(Integer.parseInt(command[1]), database.length());
-
-
-                }
-            }
-        }
-    }*/
 
     /**
      * Tests whether the election has timed out or not

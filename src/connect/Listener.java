@@ -32,7 +32,7 @@ public class Listener extends Thread {
                 boolean partitioned = NodeRunner.client.partitioned();
 
                 if (msgType == 0) {
-
+                    
                         // TODO read appendEntries message from in
                     // if it's not partitioned, add it to the queue
                     // That is, we're ignoring incoming messages if we are currently partitioned
