@@ -42,6 +42,7 @@ public class GUI extends Thread {
                 g.drawString("Current Status: Leader", 30, 60);
             else
                 g.drawString("Current Status: Not Leader", 30, 60);
+            g.drawString("Database: " + NodeRunner.node.database, 30, 75);
         }
     }
 

@@ -29,7 +29,7 @@ public abstract class Node {
     public List<String> config;
     final int PORT = 6666;
     boolean forfeit;
-    String database;
+    public String database;
 
 
     public Node(Node that) {
