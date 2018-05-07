@@ -192,8 +192,9 @@ public class Leader extends Node {
 
            AppendEntries.AppendEntriesMessage message = builder.build();
 
-           for (int i = 0; i < numNodes-1; i++) {
-               Network.send(Message.MessageType.APPEND_ENTRIES, message, config.get(i));
+           for (int i = 0; i < config.size(); i++) {
+               if (i != id)
+                Network.send(Message.MessageType.APPEND_ENTRIES, message, config.get(i));
            }
 
 
