@@ -27,6 +27,9 @@ public class Client extends Thread {
     }
 
     public boolean partitioned() {
+        while (guiClient == null) {
+            ;
+        }
         return guiClient.partitioned;
     }
 
