@@ -81,7 +81,7 @@ public class Leader extends Node {
             AppendEntries.AppendEntriesMessage.Entry entry = entryBuilder.build();
 
 
-            builder.setEntries(0, entry);
+            builder.addEntries(entry);
 
             AppendEntries.AppendEntriesMessage mes = builder.build();
 
