@@ -45,9 +45,10 @@ public class Leader extends Node {
         if (message == null)
             return;
         if (message.type == Message.MessageType.APPEND_ENTRIES) {
-            // TODO
             AppendEntries.AppendEntriesMessage ae = (AppendEntries.AppendEntriesMessage) message.message;
-            if (ae.getTerm() > this.term) forfeit = true;
+            NodeRunner.client.log("WARNING: append entries received by leader. Our term: " + this.term + ". Their term: " + ae.getTerm());
+            if (ae.getTerm() > this.term)
+                forfeit = true;
         }
         else if (message.type == Message.MessageType.APPEND_ENTRIES_RESPONSE) {
             respondToAppendEntriesResponse(message);
