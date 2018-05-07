@@ -156,6 +156,8 @@ public class Leader extends Node {
                 N++;
             }
 
+            if (matchIndex[i] == -1)
+                continue;
             if (log.get(matchIndex[i]).term == term)
                 break;
         }
