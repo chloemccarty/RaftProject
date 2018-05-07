@@ -44,14 +44,19 @@ public class Follower extends Node {
         // Question: Are able to contain an array of log entries in our message? Or are we only implementing
         // a one entry per message system?
         boolean confirm = false;
+        boolean heartbeat = false;
         AppendEntries.AppendEntriesMessage ae = (AppendEntries.AppendEntriesMessage) message.message;
 
         if (ae.getTerm() < this.term) {
             // Ignore the message and return false, decrement nextIndex on the leader server
             confirm = false;
         }
-        else if (ae.getPrevLogIndex() == -1 || ae.getPrevLogTerm() == -1 || ae.getEntriesList() == null || log.size() == 0) {
+        else if (ae.getPrevLogIndex() == -1 || ae.getPrevLogTerm() == -1 || ae.getEntriesList() == null || ) {
             // Log is empty and the message must be a heartbeat.
+            confirm = true;
+            heartbeat = true;
+        }
+        else if (log.size() == 0){
             confirm = true;
         }
         else if (log.get(ae.getPrevLogIndex()).term != ae.getPrevLogTerm()) {
@@ -60,7 +65,7 @@ public class Follower extends Node {
         }
 
         // If the message was good, proceed to append entries.
-        if (confirm) {
+        if (confirm && heartbeat) {
             for (int i=0; i<ae.getEntriesCount(); i++) {
                 LogEntry entry = new LogEntry();
                 entry.term = ae.getTerm();
