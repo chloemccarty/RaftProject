@@ -80,18 +80,17 @@ public class Follower extends Node {
             }
         }
 
-        if (!heartbeat && log.size() > 0) {
-            //  build a response message to leader
-            AppendEntries.Response.Builder builder = AppendEntries.Response.newBuilder();
-            builder.setTerm(this.term);
-            builder.setSuccess(confirm);
-            builder.setFollowerId(this.id);
-            AppendEntries.Response resp = builder.build();
-            String ip = config.get(ae.getLeaderId());
-            Network.send(Message.MessageType.APPEND_ENTRIES_RESPONSE, resp, ip);
-
-            startTime = System.currentTimeMillis();
-        }
+//        if (!heartbeat && log.size() > 0) {
+//            //  build a response message to leader
+//            AppendEntries.Response.Builder builder = AppendEntries.Response.newBuilder();
+//            builder.setTerm(this.term);
+//            builder.setSuccess(confirm);
+//            builder.setFollowerId(this.id);
+//            AppendEntries.Response resp = builder.build();
+//            String ip = config.get(ae.getLeaderId());
+//            Network.send(Message.MessageType.APPEND_ENTRIES_RESPONSE, resp, ip);
+//        }
+        startTime = System.currentTimeMillis();
     }
 
     @Override
