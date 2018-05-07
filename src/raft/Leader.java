@@ -188,7 +188,10 @@ public class Leader extends Node {
             AppendEntries.AppendEntriesMessage.Entry.Builder entryBuilder = AppendEntries.AppendEntriesMessage.Entry.newBuilder();
             entryBuilder.setMessage("");
             AppendEntries.AppendEntriesMessage.Entry entry = entryBuilder.build();
-            builder.addEntries(lastApplied, entry);
+            if (log.size() == 0)
+                builder.addEntries(-1, entry);
+            else
+                builder.addEntries(log.size()-1, entry);
 
            AppendEntries.AppendEntriesMessage message = builder.build();
 
