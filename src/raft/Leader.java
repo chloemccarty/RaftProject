@@ -173,7 +173,7 @@ public class Leader extends Node {
 
 
     public void sendHeartbeats() {
-        while (true) {
+
             long elapsed = 0;
             long beg = System.currentTimeMillis();
             while (elapsed <= 100) {
@@ -203,7 +203,7 @@ public class Leader extends Node {
            }
 
 
-        }
+        
 
     }
 
