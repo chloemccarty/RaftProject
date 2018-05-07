@@ -39,7 +39,7 @@ public abstract class Node {
         this.config = that.config;
         this.votedFor = -1;
         this.commitIndex = that.commitIndex;
-        this.lastApplied = 0;
+        this.lastApplied = -1;
         this.numNodes = that.numNodes;
     }
 

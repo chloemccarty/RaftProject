@@ -15,6 +15,8 @@ public class Follower extends Node {
     public Follower() throws IOException {
         initConfig();
         votedFor = -1;
+        commitIndex = -1;
+        lastApplied = -1;
         NodeRunner.client.log("Initializing node as follower...");
     }
 
