@@ -11,6 +11,7 @@ public class NodeRunner {
 
     public static Queue<Message> messageQueue;
     public static Client client;
+    public static Node node;
 
 
     public static void main(String[] args) throws IOException {
@@ -28,7 +29,7 @@ public class NodeRunner {
 
         // initialize the node (all nodes are followers when first initialized)
         // while loop to prevent race condition due to threading
-        Node node = new Follower();
+        node = new Follower();
 
 
 
