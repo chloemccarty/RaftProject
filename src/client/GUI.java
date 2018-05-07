@@ -33,6 +33,10 @@ public class GUI extends Thread {
         }
     }
 
+    public void updateDisplay() {
+        content.repaint();
+    }
+
     private class HelloWorldDisplay extends JPanel {
         public void paintComponent(Graphics g) {
             super.paintComponent(g);

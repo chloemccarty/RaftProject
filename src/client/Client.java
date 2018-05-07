@@ -22,6 +22,10 @@ public class Client extends Thread {
         SwingUtilities.invokeLater(() -> guiClient.setLeaderStatus(leader));
     }
 
+    public void updateDisplay() {
+        SwingUtilities.invokeLater(() -> guiClient.updateDisplay());
+    }
+
     public Client(boolean isLeader) {
         guiClient = new GUI(false);
     }

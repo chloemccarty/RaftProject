@@ -79,8 +79,10 @@ public abstract class Node {
 
     public void apply() {
         if (commitIndex > lastApplied) {
+            NodeRunner.client.log("applying changes");
             //execute commands in log from (lastApplied+1) up through commitIndex
             for (int i=lastApplied; i<=commitIndex; i++) {
+
                 LogEntry entry = log.get(i);
                 String[] command = new String[2];
                 command = entry.cmd.split(",");
@@ -107,6 +109,7 @@ public abstract class Node {
                 }
                 lastApplied = commitIndex;
             }
+            NodeRunner.client.updateDisplay();
         }
     }
 
