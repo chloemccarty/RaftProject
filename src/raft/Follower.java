@@ -89,7 +89,7 @@ public class Follower extends Node {
 
         if (rvm.getTerm() >= this.term &&
                 this.votedFor == -1 &&
-                rvm.getLastLogTerm() >= this.log.get(this.log.size()-1).term &&
+                rvm.getLastLogTerm() >= this.log.get(lastApplied).term &&
                 rvm.getLastLogIndex() >= this.lastApplied) {
 
             // we have not voted for anyone, vote for this candidate
