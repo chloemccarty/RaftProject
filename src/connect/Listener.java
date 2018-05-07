@@ -25,15 +25,15 @@ public class Listener extends Thread {
                 NodeRunner.client.log("NOTICE: message received in listener");
                 in = new DataInputStream(socket.getInputStream());
                 byte msgType = in.readByte();
+                NodeRunner.client.log("NOTICE: message received of type " + (int)msgType);
             // read in message
                 // TODO: if partitioned, don't put the message in the queue
-                while (NodeRunner.client == null) {
-                    ;
-                }
+//                while (NodeRunner.client == null) {
+//                    ;
+//                }
                 boolean partitioned = NodeRunner.client.partitioned();
 
                 if (msgType == 0) {
-
                     AppendEntries.AppendEntriesMessage ae = AppendEntries.AppendEntriesMessage.parseFrom(in);
                     // if it's not partitioned, add it to the queue
                     // That is, we're ignoring incoming messages if we are currently partitioned
