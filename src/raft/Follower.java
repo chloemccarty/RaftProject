@@ -51,7 +51,7 @@ public class Follower extends Node {
             // Ignore the message and return false, decrement nextIndex on the leader server
             confirm = false;
         }
-        else if (ae.getPrevLogIndex() == -1 || ae.getPrevLogTerm() == -1 || ae.getEntriesList() == null) {
+        else if (ae.getEntriesList() == null) {
             // Log is empty and the message must be a heartbeat.
             confirm = true;
             heartbeat = true;
@@ -80,16 +80,16 @@ public class Follower extends Node {
             }
         }
 
-//        if (!heartbeat && log.size() > 0) {
-//            //  build a response message to leader
-//            AppendEntries.Response.Builder builder = AppendEntries.Response.newBuilder();
-//            builder.setTerm(this.term);
-//            builder.setSuccess(confirm);
-//            builder.setFollowerId(this.id);
-//            AppendEntries.Response resp = builder.build();
-//            String ip = config.get(ae.getLeaderId());
-//            Network.send(Message.MessageType.APPEND_ENTRIES_RESPONSE, resp, ip);
-//        }
+        if (!heartbeat && log.size() > 0) {
+            //  build a response message to leader
+            AppendEntries.Response.Builder builder = AppendEntries.Response.newBuilder();
+            builder.setTerm(this.term);
+            builder.setSuccess(confirm);
+            builder.setFollowerId(this.id);
+            AppendEntries.Response resp = builder.build();
+            String ip = config.get(ae.getLeaderId());
+            Network.send(Message.MessageType.APPEND_ENTRIES_RESPONSE, resp, ip);
+        }
         startTime = System.currentTimeMillis();
     }
 
