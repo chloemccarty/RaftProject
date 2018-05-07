@@ -32,7 +32,7 @@ public class Candidate extends Node {
                 handleMessage(msg);
             }
 
-            if (votesReceived > (numNodes + 1) / 2) {
+            if (votesReceived >= (numNodes + 1) / 2) {
                 // return a leader Node
                 NodeRunner.client.log("Votes needed to win: " + (numNodes + 1) / 2);
                 NodeRunner.client.log("Election won with " + votesReceived + " votes");
