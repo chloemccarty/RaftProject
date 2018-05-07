@@ -65,8 +65,17 @@ public class Candidate extends Node {
         builder.setCandidateId(this.id);
         builder.setTerm(this.term);
         // TODO implement with AppendEntries Stuff
-        builder.setLastLogIndex(-1);
-        builder.setLastLogTerm(-1);
+        if (log.size() == 0)
+            builder.setLastLogIndex(0);
+        else
+            builder.setLastLogIndex(this.log.size()-1);
+        if (log.size() == 0) {
+            builder.setLastLogTerm(1);
+        }
+        else {
+            builder.setLastLogTerm(log.get(log.size()-1).term);
+        }
+
         RequestVote.RequestVoteMessage rvm = builder.build();
 
         // send to each socket
