@@ -180,7 +180,7 @@ public class Leader extends Node {
 
             long elapsed = 0;
             long beg = System.currentTimeMillis();
-            while (elapsed <= 100) {
+            while (elapsed <= 500) {
                 long end = System.currentTimeMillis();
                 elapsed = end-beg;
             }
