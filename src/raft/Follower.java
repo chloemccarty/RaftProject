@@ -150,7 +150,7 @@ public class Follower extends Node {
 
                 // reset timer because we received an AppendEntries or a RequestVote
                 // do the following only if we get an appendEntries now
-//                 startTime = System.currentTimeMillis();
+                 startTime = System.currentTimeMillis();
             }
 
             // Need to commit and execute log entries after handling the message.
