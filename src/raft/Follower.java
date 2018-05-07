@@ -50,7 +50,7 @@ public class Follower extends Node {
             // Ignore the message and return false, decrement nextIndex on the leader server
             confirm = false;
         }
-        else if (ae.getEntriesCount() == 0) {
+        else if (ae.getEntriesList() == null) {
             // Log is empty and the message must be a heartbeat.
             confirm = true;
         }
