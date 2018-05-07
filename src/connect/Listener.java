@@ -22,6 +22,7 @@ public class Listener extends Thread {
         public void run() {
             DataInputStream in = null;
             try {
+                NodeRunner.client.log("NOTICE: message received in listener");
                 in = new DataInputStream(socket.getInputStream());
                 byte msgType = in.readByte();
             // read in message
