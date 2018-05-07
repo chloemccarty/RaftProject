@@ -84,57 +84,57 @@ public class Follower extends Node {
         }
     }
 
-    @Override
-    public void respondToRequestVote(Message message) {
-        RequestVote.RequestVoteMessage rvm = (RequestVote.RequestVoteMessage) message.message;
-        RequestVoteRespo.RequestVoteResponse.Builder builder = RequestVoteRespo.RequestVoteResponse.newBuilder();
-
-        /* if (rvm.getTerm() >= this.term &&
-                this.votedFor == -1 &&
-                rvm.getLastLogIndex() >= this.lastApplied &&
-                (this.log.size() == 0 ||
-        rvm.getLastLogTerm() >= this.log.get(lastApplied).term)) */
-        if (rvm.getTerm() >= this.term &&
-                this.votedFor == -1)
-        {
-
-            // we have not voted for anyone, vote for this candidate
-            this.votedFor = rvm.getCandidateId();
-            NodeRunner.client.log("Voting for Candidate " + this.votedFor);
-            builder.setVoteGranted(true);
-            setTerm(rvm.getTerm());
-            builder.setTerm(this.term);
-        } else if (rvm.getTerm() < this.term) {
-            if (this.votedFor == -1) {
-                NodeRunner.client.log("Refusing to vote for Candidate. My term: " + this.term +
-                        ". Their term: " + rvm.getTerm() + ". Voted for: No one");
-            } else {
-                NodeRunner.client.log("Refusing to vote for Candidate. My term: " + this.term +
-                        ". Their term: " + rvm.getTerm() + ". Voted for: " + this.votedFor);
-            }
-
-            // I don't think we need to update our term if theirs is smaller than ours,
-            // we need to set their term to ours?
-            // setTerm(rvm.getTerm());
-            builder.setVoteGranted(false);
-            builder.setTerm(this.term);
-        } else {
-            if (this.votedFor == -1) {
-                NodeRunner.client.log("Refusing to vote for Candidate. My term: " + this.term +
-                        ". Their term: " + rvm.getTerm() + ". Voted for: No one");
-            } else {
-                NodeRunner.client.log("Refusing to vote for Candidate. My term: " + this.term +
-                        ". Their term: " + rvm.getTerm() + ". Voted for: " + this.votedFor);
-            }
-            // update our term
-            builder.setVoteGranted(false);
-            builder.setTerm(this.term);
-        }
-
-        RequestVoteRespo.RequestVoteResponse rvr = builder.build();
-        String candidateIp = config.get(rvm.getCandidateId());
-        Network.send(REQUEST_VOTES_RESPONSE, rvr, candidateIp);
-    }
+//    @Override
+//    public void respondToRequestVote(Message message) {
+//        RequestVote.RequestVoteMessage rvm = (RequestVote.RequestVoteMessage) message.message;
+//        RequestVoteRespo.RequestVoteResponse.Builder builder = RequestVoteRespo.RequestVoteResponse.newBuilder();
+//
+//        /* if (rvm.getTerm() >= this.term &&
+//                this.votedFor == -1 &&
+//                rvm.getLastLogIndex() >= this.lastApplied &&
+//                (this.log.size() == 0 ||
+//        rvm.getLastLogTerm() >= this.log.get(lastApplied).term)) */
+//        if (rvm.getTerm() >= this.term &&
+//                this.votedFor == -1)
+//        {
+//
+//            // we have not voted for anyone, vote for this candidate
+//            this.votedFor = rvm.getCandidateId();
+//            NodeRunner.client.log("Voting for Candidate " + this.votedFor);
+//            builder.setVoteGranted(true);
+//            setTerm(rvm.getTerm());
+//            builder.setTerm(this.term);
+//        } else if (rvm.getTerm() < this.term) {
+//            if (this.votedFor == -1) {
+//                NodeRunner.client.log("Refusing to vote for Candidate. My term: " + this.term +
+//                        ". Their term: " + rvm.getTerm() + ". Voted for: No one");
+//            } else {
+//                NodeRunner.client.log("Refusing to vote for Candidate. My term: " + this.term +
+//                        ". Their term: " + rvm.getTerm() + ". Voted for: " + this.votedFor);
+//            }
+//
+//            // I don't think we need to update our term if theirs is smaller than ours,
+//            // we need to set their term to ours?
+//            // setTerm(rvm.getTerm());
+//            builder.setVoteGranted(false);
+//            builder.setTerm(this.term);
+//        } else {
+//            if (this.votedFor == -1) {
+//                NodeRunner.client.log("Refusing to vote for Candidate. My term: " + this.term +
+//                        ". Their term: " + rvm.getTerm() + ". Voted for: No one");
+//            } else {
+//                NodeRunner.client.log("Refusing to vote for Candidate. My term: " + this.term +
+//                        ". Their term: " + rvm.getTerm() + ". Voted for: " + this.votedFor);
+//            }
+//            // update our term
+//            builder.setVoteGranted(false);
+//            builder.setTerm(this.term);
+//        }
+//
+//        RequestVoteRespo.RequestVoteResponse rvr = builder.build();
+//        String candidateIp = config.get(rvm.getCandidateId());
+//        Network.send(REQUEST_VOTES_RESPONSE, rvr, candidateIp);
+//    }
 
     @Override
     public Node run() {
