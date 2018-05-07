@@ -51,18 +51,26 @@ public class Follower extends Node {
             // Ignore the message and return false, decrement nextIndex on the leader server
             confirm = false;
         }
+
         else if (ae.getEntriesList() == null) {
             // Log is empty and the message must be a heartbeat.
             confirm = true;
             heartbeat = true;
         }
-        else if (log.size() == 0){
+
+        else if (log.size() == 0 && ae.getPrevLogIndex()==-1){
             confirm = true;
+            heartbeat = true;
         }
+
         else if (log.get(ae.getPrevLogIndex()).term != ae.getPrevLogTerm()) {
             // return false
             confirm = false;
         }
+
+
+
+
 
         // If the message was good, proceed to append entries.
         if (confirm && !heartbeat) {
