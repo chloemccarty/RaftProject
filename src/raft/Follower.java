@@ -89,11 +89,14 @@ public class Follower extends Node {
         RequestVote.RequestVoteMessage rvm = (RequestVote.RequestVoteMessage) message.message;
         RequestVoteRespo.RequestVoteResponse.Builder builder = RequestVoteRespo.RequestVoteResponse.newBuilder();
 
-        if (rvm.getTerm() >= this.term &&
+        /* if (rvm.getTerm() >= this.term &&
                 this.votedFor == -1 &&
                 rvm.getLastLogIndex() >= this.lastApplied &&
                 (this.log.size() == 0 ||
-        rvm.getLastLogTerm() >= this.log.get(lastApplied).term)) {
+        rvm.getLastLogTerm() >= this.log.get(lastApplied).term)) */
+        if (rvm.getTerm() >= this.term &&
+                this.votedFor == -1)
+        {
 
             // we have not voted for anyone, vote for this candidate
             this.votedFor = rvm.getCandidateId();
