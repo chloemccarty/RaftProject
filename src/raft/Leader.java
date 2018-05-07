@@ -50,21 +50,7 @@ public class Leader extends Node {
             if (ae.getTerm() > this.term) forfeit = true;
         }
         else if (message.type == Message.MessageType.APPEND_ENTRIES_RESPONSE) {
-            // TODO
-            AppendEntries.Response aer = (AppendEntries.Response) message.message;
-            if (aer.getSuccess()) {
-                //increment nextIndex and set matchIndex equal to nextIndex for the corresponding follower from which the message was received.
-                int index = nextIndex[aer.getFollowerId()];
-                nextIndex[aer.getFollowerId()] = index+1;
-                //update matchIndex to one less than the updated nextIndex value.
-                matchIndex[aer.getFollowerId()] = index;
-            }
-
-            else{
-                //Decrement nextIndex and keep matchIndex the same.
-                int index = nextIndex[aer.getFollowerId()];
-                nextIndex[aer.getFollowerId()] = index-1;
-            }
+            respondToAppendEntriesResponse(message);
         }
         else if (message.type == Message.MessageType.REQUEST_VOTES) {
             respondToRequestVote(message);
@@ -106,6 +92,24 @@ public class Leader extends Node {
             // This will be redundant. don't need it.
         }
 
+    }
+
+    private void respondToAppendEntriesResponse(Message message) {
+        // TODO
+        AppendEntries.Response aer = (AppendEntries.Response) message.message;
+        if (aer.getSuccess()) {
+            //increment nextIndex and set matchIndex equal to nextIndex for the corresponding follower from which the message was received.
+            int index = nextIndex[aer.getFollowerId()];
+            nextIndex[aer.getFollowerId()] = index+1;
+            //update matchIndex to one less than the updated nextIndex value.
+            matchIndex[aer.getFollowerId()] = index;
+        }
+
+        else{
+            //Decrement nextIndex and keep matchIndex the same.
+            int index = nextIndex[aer.getFollowerId()];
+            nextIndex[aer.getFollowerId()] = index-1;
+        }
     }
 
     @Override

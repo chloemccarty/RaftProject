@@ -28,51 +28,8 @@ public class Follower extends Node {
     @Override
     public void handleMessage(Message message) {
         if (message.type == Message.MessageType.APPEND_ENTRIES) {
-            // TODO (later) we must respond appropriately to the leader
-            // Question: Are able to contain an array of log entries in our message? Or are we only implementing
-            // a one entry per message system?
-            boolean confirm = false;
-            AppendEntries.AppendEntriesMessage ae = (AppendEntries.AppendEntriesMessage) message.message;
+            respondToAppendEntries(message);
 
-            if (ae.getTerm() < this.term) {
-                // Ignore the message and return false, decrement nextIndex on the leader server
-                confirm = false;
-            }
-            else if (ae.getEntriesCount() == 0) {
-                // Log is empty and the message must be a heartbeat.
-                confirm = true;
-            }
-            else if (log.get(ae.getPrevLogIndex()).term != ae.getPrevLogTerm() ) {
-                // return false
-                confirm = false;
-            }
-
-            // If the message was good, proceed to append entries.
-            if (confirm) {
-                for (int i=0; i<ae.getEntriesCount(); i++) {
-                    LogEntry entry = new LogEntry();
-                    entry.term = ae.getTerm();
-                    entry.cmd = ae.getEntries(i).getMessage();
-                    log.add(entry);
-                }
-                // TODO look into this
-                if (ae.getLeaderCommit() > this.commitIndex) {
-                    // this.commitIndex = ae.getLeaderCommit();
-                    // this.commitIndex = log.size() - 1;
-                    this.commitIndex = Math.min(this.commitIndex, log.size()-1);
-                }
-            }
-
-            //  build a response message to leader
-            AppendEntries.Response.Builder builder = AppendEntries.Response.newBuilder();
-            builder.setTerm(this.term);
-            builder.setSuccess(confirm);
-            builder.setFollowerId(this.id);
-            AppendEntries.Response resp = builder.build();
-            String ip = config.get(ae.getLeaderId());
-            Network.send(Message.MessageType.APPEND_ENTRIES_RESPONSE, resp, ip);
-
-            startTime = System.currentTimeMillis();
         } else if (message.type == Message.MessageType.APPEND_ENTRIES_RESPONSE) {
             // ignore
         } else if (message.type == Message.MessageType.REQUEST_VOTES) {
@@ -80,6 +37,54 @@ public class Follower extends Node {
         } else if (message.type == Message.MessageType.REQUEST_VOTES_RESPONSE) {
             // ignore
         }
+    }
+
+    private void respondToAppendEntries(Message message) {
+        // TODO (later) we must respond appropriately to the leader
+        // Question: Are able to contain an array of log entries in our message? Or are we only implementing
+        // a one entry per message system?
+        boolean confirm = false;
+        AppendEntries.AppendEntriesMessage ae = (AppendEntries.AppendEntriesMessage) message.message;
+
+        if (ae.getTerm() < this.term) {
+            // Ignore the message and return false, decrement nextIndex on the leader server
+            confirm = false;
+        }
+        else if (ae.getEntriesCount() == 0) {
+            // Log is empty and the message must be a heartbeat.
+            confirm = true;
+        }
+        else if (log.get(ae.getPrevLogIndex()).term != ae.getPrevLogTerm() ) {
+            // return false
+            confirm = false;
+        }
+
+        // If the message was good, proceed to append entries.
+        if (confirm) {
+            for (int i=0; i<ae.getEntriesCount(); i++) {
+                LogEntry entry = new LogEntry();
+                entry.term = ae.getTerm();
+                entry.cmd = ae.getEntries(i).getMessage();
+                log.add(entry);
+            }
+            // TODO look into this
+            if (ae.getLeaderCommit() > this.commitIndex) {
+                // this.commitIndex = ae.getLeaderCommit();
+                // this.commitIndex = log.size() - 1;
+                this.commitIndex = Math.min(this.commitIndex, log.size()-1);
+            }
+        }
+
+        //  build a response message to leader
+        AppendEntries.Response.Builder builder = AppendEntries.Response.newBuilder();
+        builder.setTerm(this.term);
+        builder.setSuccess(confirm);
+        builder.setFollowerId(this.id);
+        AppendEntries.Response resp = builder.build();
+        String ip = config.get(ae.getLeaderId());
+        Network.send(Message.MessageType.APPEND_ENTRIES_RESPONSE, resp, ip);
+
+        startTime = System.currentTimeMillis();
     }
 
     @Override
