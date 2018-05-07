@@ -79,8 +79,9 @@ public class Candidate extends Node {
         RequestVote.RequestVoteMessage rvm = builder.build();
 
         // send to each socket
-        for (String ip : config) {
-            Network.send(REQUEST_VOTES, rvm, ip);
+        for (int i = 0; i < config.size(); i++) {
+            if (i != this.id)
+                Network.send(REQUEST_VOTES, rvm, config.get(i));
         }
     }
 
