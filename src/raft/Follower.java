@@ -74,7 +74,7 @@ public class Follower extends Node {
 
             //reset confirm to true at the end of this collection of if statements so it can be re-processed by the preceding if statements
             confirm = true;
-
+            startTime = System.currentTimeMillis();
         } else if (message.type == Message.MessageType.APPEND_ENTRIES_RESPONSE) {
             // ignore
         } else if (message.type == Message.MessageType.REQUEST_VOTES) {
@@ -149,7 +149,8 @@ public class Follower extends Node {
                 handleMessage(message);
 
                 // reset timer because we received an AppendEntries or a RequestVote
-                startTime = System.currentTimeMillis();
+                // do the following only if we get an appendEntries now
+//                 startTime = System.currentTimeMillis();
             }
 
             // Need to commit and execute log entries after handling the message.

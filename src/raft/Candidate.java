@@ -66,7 +66,7 @@ public class Candidate extends Node {
         builder.setTerm(this.term);
         // TODO implement with AppendEntries Stuff
         if (log.size() == 0)
-            builder.setLastLogIndex(0);
+            builder.setLastLogIndex(-1);
         else
             builder.setLastLogIndex(this.log.size()-1);
         if (log.size() == 0) {
