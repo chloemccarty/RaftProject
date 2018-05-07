@@ -127,7 +127,7 @@ public abstract class Node {
                 config.add(ip);
           //  }
         }
-        numNodes = config.size() + 1; // include ourself in the count
+        numNodes = config.size(); // include ourself in the count
         NodeRunner.client.log(numNodes + " nodes in cluster");
     }
 
