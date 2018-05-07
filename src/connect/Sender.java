@@ -23,15 +23,13 @@ public class Sender extends Thread {
     @Override
     public void run() {
         // send message and data to other node
-        try {
+        try (Socket socket = new  Socket(ip, PORT)){
             if (!NodeRunner.client.partitioned()) {
-                Socket socket = new Socket(ip, PORT);
 
                 DataOutputStream out = new DataOutputStream(socket.getOutputStream());
                 out.writeByte(type);
                 // send length of data
                 data.writeTo(out);
-                socket.close();
             }
         } catch (IOException e) {
             e.printStackTrace();

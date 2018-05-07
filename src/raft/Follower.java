@@ -10,10 +10,9 @@ public class Follower extends Node {
 
     long startTime;
     long electionTimeout;
-    boolean confirm = true;
 
     public Follower() throws IOException {
-        initConfig();
+        id = initConfig();
         votedFor = -1;
         commitIndex = -1;
         lastApplied = -1;
@@ -32,13 +31,14 @@ public class Follower extends Node {
             // TODO (later) we must respond appropriately to the leader
             // Question: Are able to contain an array of log entries in our message? Or are we only implementing
             // a one entry per message system?
+            boolean confirm = false;
             AppendEntries.AppendEntriesMessage ae = (AppendEntries.AppendEntriesMessage) message.message;
 
             if (ae.getTerm() < this.term) {
                 // Ignore the message and return false, decrement nextIndex on the leader server
                 confirm = false;
             }
-            else if (ae.getPrevLogIndex() == -1 || ae.getEntriesCount() == 0) {
+            else if (ae.getEntriesCount() == 0) {
                 // Log is empty and the message must be a heartbeat.
                 confirm = true;
             }
@@ -49,31 +49,29 @@ public class Follower extends Node {
 
             // If the message was good, proceed to append entries.
             if (confirm) {
-                for (int i=log.size(); i<log.size() + ae.getEntriesCount() - 1; i++) {
+                for (int i=0; i<ae.getEntriesCount(); i++) {
                     LogEntry entry = new LogEntry();
                     entry.term = ae.getTerm();
                     entry.cmd = ae.getEntries(i).getMessage();
                     log.add(entry);
                 }
-            }
-
-
-            if (ae.getLeaderCommit() > this.commitIndex) {
-                // this.commitIndex = ae.getLeaderCommit();
-                // this.commitIndex = log.size() - 1;
-                this.commitIndex = Math.min(this.commitIndex, log.size()-1);
+                // TODO look into this
+                if (ae.getLeaderCommit() > this.commitIndex) {
+                    // this.commitIndex = ae.getLeaderCommit();
+                    // this.commitIndex = log.size() - 1;
+                    this.commitIndex = Math.min(this.commitIndex, log.size()-1);
+                }
             }
 
             //  build a response message to leader
             AppendEntries.Response.Builder builder = AppendEntries.Response.newBuilder();
             builder.setTerm(this.term);
             builder.setSuccess(confirm);
+            builder.setFollowerId(this.id);
             AppendEntries.Response resp = builder.build();
             String ip = config.get(ae.getLeaderId());
             Network.send(Message.MessageType.APPEND_ENTRIES_RESPONSE, resp, ip);
 
-            //reset confirm to true at the end of this collection of if statements so it can be re-processed by the preceding if statements
-            confirm = true;
             startTime = System.currentTimeMillis();
         } else if (message.type == Message.MessageType.APPEND_ENTRIES_RESPONSE) {
             // ignore
@@ -84,65 +82,65 @@ public class Follower extends Node {
         }
     }
 
-//    @Override
-//    public void respondToRequestVote(Message message) {
-//        RequestVote.RequestVoteMessage rvm = (RequestVote.RequestVoteMessage) message.message;
-//        RequestVoteRespo.RequestVoteResponse.Builder builder = RequestVoteRespo.RequestVoteResponse.newBuilder();
-//
-//        /* if (rvm.getTerm() >= this.term &&
-//                this.votedFor == -1 &&
-//                rvm.getLastLogIndex() >= this.lastApplied &&
-//                (this.log.size() == 0 ||
-//        rvm.getLastLogTerm() >= this.log.get(lastApplied).term)) */
-//        if (rvm.getTerm() >= this.term &&
-//                this.votedFor == -1)
-//        {
-//
-//            // we have not voted for anyone, vote for this candidate
-//            this.votedFor = rvm.getCandidateId();
-//            NodeRunner.client.log("Voting for Candidate " + this.votedFor);
-//            builder.setVoteGranted(true);
-//            setTerm(rvm.getTerm());
-//            builder.setTerm(this.term);
-//        } else if (rvm.getTerm() < this.term) {
-//            if (this.votedFor == -1) {
-//                NodeRunner.client.log("Refusing to vote for Candidate. My term: " + this.term +
-//                        ". Their term: " + rvm.getTerm() + ". Voted for: No one");
-//            } else {
-//                NodeRunner.client.log("Refusing to vote for Candidate. My term: " + this.term +
-//                        ". Their term: " + rvm.getTerm() + ". Voted for: " + this.votedFor);
-//            }
-//
-//            // I don't think we need to update our term if theirs is smaller than ours,
-//            // we need to set their term to ours?
-//            // setTerm(rvm.getTerm());
-//            builder.setVoteGranted(false);
-//            builder.setTerm(this.term);
-//        } else {
-//            if (this.votedFor == -1) {
-//                NodeRunner.client.log("Refusing to vote for Candidate. My term: " + this.term +
-//                        ". Their term: " + rvm.getTerm() + ". Voted for: No one");
-//            } else {
-//                NodeRunner.client.log("Refusing to vote for Candidate. My term: " + this.term +
-//                        ". Their term: " + rvm.getTerm() + ". Voted for: " + this.votedFor);
-//            }
-//            // update our term
-//            builder.setVoteGranted(false);
-//            builder.setTerm(this.term);
-//        }
-//
-//        RequestVoteRespo.RequestVoteResponse rvr = builder.build();
-//        String candidateIp = config.get(rvm.getCandidateId());
-//        Network.send(REQUEST_VOTES_RESPONSE, rvr, candidateIp);
-//    }
+    @Override
+    public void respondToRequestVote(Message message) {
+        RequestVote.RequestVoteMessage rvm = (RequestVote.RequestVoteMessage) message.message;
+        RequestVoteRespo.RequestVoteResponse.Builder builder = RequestVoteRespo.RequestVoteResponse.newBuilder();
+
+        /* if (rvm.getTerm() >= this.term &&
+                this.votedFor == -1 &&
+                rvm.getLastLogIndex() >= this.lastApplied &&
+                (this.log.size() == 0 ||
+        rvm.getLastLogTerm() >= this.log.get(lastApplied).term)) */
+        if (rvm.getTerm() >= this.term &&
+                this.votedFor == -1)
+        {
+
+            // we have not voted for anyone, vote for this candidate
+            this.votedFor = rvm.getCandidateId();
+            NodeRunner.client.log("Voting for Candidate " + this.votedFor);
+            builder.setVoteGranted(true);
+            setTerm(rvm.getTerm());
+            builder.setTerm(this.term);
+        } else if (rvm.getTerm() < this.term) {
+            if (this.votedFor == -1) {
+                NodeRunner.client.log("Refusing to vote for Candidate. My term: " + this.term +
+                        ". Their term: " + rvm.getTerm() + ". Voted for: No one");
+            } else {
+                NodeRunner.client.log("Refusing to vote for Candidate. My term: " + this.term +
+                        ". Their term: " + rvm.getTerm() + ". Voted for: " + this.votedFor);
+            }
+
+            // I don't think we need to update our term if theirs is smaller than ours,
+            // we need to set their term to ours?
+            // setTerm(rvm.getTerm());
+            builder.setVoteGranted(false);
+            builder.setTerm(this.term);
+        } else {
+            if (this.votedFor == -1) {
+                NodeRunner.client.log("Refusing to vote for Candidate. My term: " + this.term +
+                        ". Their term: " + rvm.getTerm() + ". Voted for: No one");
+            } else {
+                NodeRunner.client.log("Refusing to vote for Candidate. My term: " + this.term +
+                        ". Their term: " + rvm.getTerm() + ". Voted for: " + this.votedFor);
+            }
+            // update our term
+            builder.setVoteGranted(false);
+            builder.setTerm(this.term);
+        }
+
+        RequestVoteRespo.RequestVoteResponse rvr = builder.build();
+        String candidateIp = config.get(rvm.getCandidateId());
+        Network.send(REQUEST_VOTES_RESPONSE, rvr, candidateIp);
+    }
 
     @Override
     public Node run() {
-        apply();
-
+        startTime = System.currentTimeMillis();
         // Followers only (1) respond to AppendEntries/RequestVotes or
         // (2) become a candidate if an election timeout occurs
         while (true) {
+            apply();
             Message message = checkForInput();
             if (message != null) {
                 NodeRunner.client.log("Message received by follower");
