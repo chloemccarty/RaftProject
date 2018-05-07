@@ -22,7 +22,7 @@ public class Follower extends Node {
     public Follower(Node node) {
         super(node);
         startTime = System.currentTimeMillis();
-        electionTimeout = (long) (Math.random() + 1) * 300 + 800;
+        electionTimeout = (long) (Math.random() + 1) * 300 + 500;
     }
 
     @Override
