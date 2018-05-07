@@ -65,7 +65,7 @@ public class Follower extends Node {
         }
 
         // If the message was good, proceed to append entries.
-        if (confirm && heartbeat) {
+        if (confirm && !heartbeat) {
             for (int i=0; i<ae.getEntriesCount(); i++) {
                 LogEntry entry = new LogEntry();
                 entry.term = ae.getTerm();
@@ -80,16 +80,18 @@ public class Follower extends Node {
             }
         }
 
-        //  build a response message to leader
-        AppendEntries.Response.Builder builder = AppendEntries.Response.newBuilder();
-        builder.setTerm(this.term);
-        builder.setSuccess(confirm);
-        builder.setFollowerId(this.id);
-        AppendEntries.Response resp = builder.build();
-        String ip = config.get(ae.getLeaderId());
-        Network.send(Message.MessageType.APPEND_ENTRIES_RESPONSE, resp, ip);
+        if (!heartbeat) {
+            //  build a response message to leader
+            AppendEntries.Response.Builder builder = AppendEntries.Response.newBuilder();
+            builder.setTerm(this.term);
+            builder.setSuccess(confirm);
+            builder.setFollowerId(this.id);
+            AppendEntries.Response resp = builder.build();
+            String ip = config.get(ae.getLeaderId());
+            Network.send(Message.MessageType.APPEND_ENTRIES_RESPONSE, resp, ip);
 
-        startTime = System.currentTimeMillis();
+            startTime = System.currentTimeMillis();
+        }
     }
 
     @Override
