@@ -125,11 +125,15 @@ public class Leader extends Node {
             // send response
             Message m = checkForInput();
             if (m != null) {
+                // TODO figure out why we're not getting this
                 NodeRunner.client.log("Message received by leader");
                 handleMessage(m);
                 if (forfeit) {
                     return new Follower(this);
                 }
+            }
+            else {
+                NodeRunner.client.log("WARNING: no messages in queue");
             }
 
             sendHeartbeats();

@@ -26,11 +26,7 @@ public class Listener extends Thread {
                 in = new DataInputStream(socket.getInputStream());
                 byte msgType = in.readByte();
                 NodeRunner.client.log("NOTICE: message received of type " + (int)msgType);
-            // read in message
-                // TODO: if partitioned, don't put the message in the queue
-//                while (NodeRunner.client == null) {
-//                    ;
-//                }
+
                 boolean partitioned = NodeRunner.client.partitioned();
 
                 if (msgType == 0) {
@@ -39,6 +35,9 @@ public class Listener extends Thread {
                     // That is, we're ignoring incoming messages if we are currently partitioned
                     if (!partitioned) {
                         NodeRunner.messageQueue.add(new Message(Message.MessageType.APPEND_ENTRIES, ae));
+                    }
+                    else {
+                        NodeRunner.client.log("WARNING: partitioned");
                     }
                 }
                 else if (msgType == 1) {
