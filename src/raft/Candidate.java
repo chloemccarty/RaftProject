@@ -17,7 +17,7 @@ public class Candidate extends Node {
         NodeRunner.client.log("Initializing node as candidate...");
         electionStarted = System.currentTimeMillis();
         // this will need to be configured to be in a nicer range probably
-        electionTimeout = (long) (Math.random() + 1) * 200 + 500;
+        electionTimeout = (long) (Math.random() + 1) * 300 + 500;
     }
 
     @Override
@@ -32,7 +32,7 @@ public class Candidate extends Node {
                 handleMessage(msg);
             }
 
-            if (votesReceived > (numNodes + 1) / 2) {
+            if (votesReceived >= (numNodes + 1) / 2) {
                 // return a leader Node
                 NodeRunner.client.log("Votes needed to win: " + (numNodes + 1) / 2);
                 NodeRunner.client.log("Election won with " + votesReceived + " votes");

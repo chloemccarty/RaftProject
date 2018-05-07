@@ -29,7 +29,7 @@ public abstract class Node {
     public List<String> config;
     final int PORT = 6666;
     boolean forfeit;
-    String database;
+    public String database;
 
 
     public Node(Node that) {
@@ -79,8 +79,10 @@ public abstract class Node {
 
     public void apply() {
         if (commitIndex > lastApplied) {
+            NodeRunner.client.log("applying changes");
             //execute commands in log from (lastApplied+1) up through commitIndex
             for (int i=lastApplied; i<=commitIndex; i++) {
+
                 LogEntry entry = log.get(i);
                 String[] command = new String[2];
                 command = entry.cmd.split(",");
@@ -107,13 +109,16 @@ public abstract class Node {
                 }
                 lastApplied = commitIndex;
             }
+            NodeRunner.client.updateDisplay();
         }
     }
 
     /**
      * Read IP addresses of nodes from config file.
+     * Return the id of this node
      */
-    public void initConfig() throws IOException {
+    public int initConfig() throws IOException {
+        int id = -1;
         NodeRunner.client.log("Configuring cluster...");
 
         // be sure not to add self to list of nodes to send to
@@ -122,14 +127,18 @@ public abstract class Node {
 
         List<String> ips = Files.readAllLines(Paths.get("Config.txt"));
         config = new ArrayList<>();
-        for (String ip : ips) {
-          //  if (!thisIP.equals(ip)) {
-                NodeRunner.client.log("adding node at ip " + ip);
-                config.add(ip);
-          //  }
+        for (int i = 0; i < ips.size(); i++) {
+            if (thisIP.equals(ips.get(i))) {
+                id = i;
+            }
+            NodeRunner.client.log("adding node at ip " + ips.get(i));
+            config.add(ips.get(i));
+
         }
         numNodes = config.size(); // include ourself in the count
         NodeRunner.client.log(numNodes + " nodes in cluster");
+
+        return id;
     }
 
     public void respondToRequestVote(Message message) {
@@ -141,9 +150,12 @@ public abstract class Node {
             this.term = rvm.getTerm();
         }
 
+
         // respond to sender
         RequestVoteRespo.RequestVoteResponse.Builder builder = RequestVoteRespo.RequestVoteResponse.newBuilder();
         if (forfeit) {
+            // TODO instead just revert to follower, put message back in the front of the queue possibly
+            // otherwise, we need to ensure bookkeeping is correct (votedFor needs to be updated)
             builder.setVoteGranted(true);
             NodeRunner.client.log("Voting for candidate: " + rvm.getCandidateId());
         } else {

@@ -45,26 +45,13 @@ public class Leader extends Node {
         if (message == null)
             return;
         if (message.type == Message.MessageType.APPEND_ENTRIES) {
-            // TODO
             AppendEntries.AppendEntriesMessage ae = (AppendEntries.AppendEntriesMessage) message.message;
-            if (ae.getTerm() > this.term) forfeit = true;
+            NodeRunner.client.log("WARNING: append entries received by leader. Our term: " + this.term + ". Their term: " + ae.getTerm());
+            if (ae.getTerm() > this.term)
+                forfeit = true;
         }
         else if (message.type == Message.MessageType.APPEND_ENTRIES_RESPONSE) {
-            // TODO
-            AppendEntries.Response aer = (AppendEntries.Response) message.message;
-            if (aer.getSuccess()) {
-                //increment nextIndex and set matchIndex equal to nextIndex for the corresponding follower from which the message was received.
-                int index = nextIndex[aer.getFollowerId()];
-                nextIndex[aer.getFollowerId()] = index+1;
-                //update matchIndex to one less than the updated nextIndex value.
-                matchIndex[aer.getFollowerId()] = index;
-            }
-
-            else{
-                //Decrement nextIndex and keep matchIndex the same.
-                int index = nextIndex[aer.getFollowerId()];
-                nextIndex[aer.getFollowerId()] = index-1;
-            }
+            respondToAppendEntriesResponse(message);
         }
         else if (message.type == Message.MessageType.REQUEST_VOTES) {
             respondToRequestVote(message);
@@ -85,7 +72,8 @@ public class Leader extends Node {
             AppendEntries.AppendEntriesMessage.Builder builder = AppendEntries.AppendEntriesMessage.newBuilder();
             builder.setTerm(this.term);
             builder.setLeaderId(this.id);
-            builder.setPrevLogIndex(lastApplied);
+            builder.setPrevLogIndex(log.size()-1);
+            builder.setPrevLogTerm(log.get(log.size()-1).term);
             builder.setLeaderCommit(commitIndex);
 
             AppendEntries.AppendEntriesMessage.Entry.Builder entryBuilder = AppendEntries.AppendEntriesMessage.Entry.newBuilder();
@@ -93,7 +81,8 @@ public class Leader extends Node {
             entryBuilder.setMessage(message.clientCmd.cmd);
             AppendEntries.AppendEntriesMessage.Entry entry = entryBuilder.build();
 
-            builder.setEntries(this.log.size(), entry);
+
+            builder.addEntries(entry);
 
             AppendEntries.AppendEntriesMessage mes = builder.build();
 
@@ -108,6 +97,24 @@ public class Leader extends Node {
 
     }
 
+    private void respondToAppendEntriesResponse(Message message) {
+        // TODO
+        AppendEntries.Response aer = (AppendEntries.Response) message.message;
+        if (aer.getSuccess()) {
+            //increment nextIndex and set matchIndex equal to nextIndex for the corresponding follower from which the message was received.
+            int index = nextIndex[aer.getFollowerId()];
+            nextIndex[aer.getFollowerId()] = index+1;
+            //update matchIndex to one less than the updated nextIndex value.
+            matchIndex[aer.getFollowerId()] = index;
+        }
+
+        else{
+            //Decrement nextIndex and keep matchIndex the same.
+            int index = nextIndex[aer.getFollowerId()];
+            nextIndex[aer.getFollowerId()] = index-1;
+        }
+    }
+
     @Override
     public Node run() {
         while (true) {
@@ -120,11 +127,15 @@ public class Leader extends Node {
             // send response
             Message m = checkForInput();
             if (m != null) {
+                // TODO figure out why we're not getting this
                 NodeRunner.client.log("Message received by leader");
                 handleMessage(m);
                 if (forfeit) {
                     return new Follower(this);
                 }
+            }
+            else {
+                NodeRunner.client.log("WARNING: no messages in queue");
             }
 
             sendHeartbeats();
@@ -145,6 +156,8 @@ public class Leader extends Node {
                 N++;
             }
 
+            if (matchIndex[i] == -1)
+                continue;
             if (log.get(matchIndex[i]).term == term)
                 break;
         }
@@ -164,7 +177,7 @@ public class Leader extends Node {
 
 
     public void sendHeartbeats() {
-        while (true) {
+
             long elapsed = 0;
             long beg = System.currentTimeMillis();
             while (elapsed <= 100) {
@@ -185,13 +198,6 @@ public class Leader extends Node {
             builder.setLeaderCommit(commitIndex);
 
             // we need to send an empty message
-            AppendEntries.AppendEntriesMessage.Entry.Builder entryBuilder = AppendEntries.AppendEntriesMessage.Entry.newBuilder();
-            entryBuilder.setMessage("");
-            AppendEntries.AppendEntriesMessage.Entry entry = entryBuilder.build();
-            if (log.size() == 0)
-                builder.addEntries(-1, entry);
-            else
-                builder.addEntries(log.size()-1, entry);
 
            AppendEntries.AppendEntriesMessage message = builder.build();
 
@@ -201,7 +207,7 @@ public class Leader extends Node {
            }
 
 
-        }
+
 
     }
 
