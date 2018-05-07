@@ -58,17 +58,11 @@ public class Follower extends Node {
             heartbeat = true;
         }
 
-        else if (log.size() == 0 && ae.getPrevLogIndex()==-1){
-            confirm = true;
-            heartbeat = true;
-        }
 
         else if (log.get(ae.getPrevLogIndex()).term != ae.getPrevLogTerm()) {
             // return false
             confirm = false;
         }
-
-
 
 
 
