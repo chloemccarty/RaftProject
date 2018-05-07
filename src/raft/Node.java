@@ -19,14 +19,14 @@ import java.util.Queue;
 import static raft.NodeRunner.messageQueue;
 
 public abstract class Node {
-    int id;
+    public int id;
     int term;
     int numNodes;
     int votedFor;
     int commitIndex;
     int lastApplied;
     List<LogEntry> log;
-    List<String> config;
+    public List<String> config;
     final int PORT = 6666;
     boolean forfeit;
     String database;
@@ -122,10 +122,10 @@ public abstract class Node {
         List<String> ips = Files.readAllLines(Paths.get("Config.txt"));
         config = new ArrayList<>();
         for (String ip : ips) {
-            if (!thisIP.equals(ip)) {
+          //  if (!thisIP.equals(ip)) {
                 NodeRunner.client.log("adding node at ip " + ip);
                 config.add(ip);
-            }
+          //  }
         }
         numNodes = config.size() + 1; // include ourself in the count
         NodeRunner.client.log(numNodes + " nodes in cluster");
