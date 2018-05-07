@@ -17,7 +17,7 @@ public class Candidate extends Node {
         NodeRunner.client.log("Initializing node as candidate...");
         electionStarted = System.currentTimeMillis();
         // this will need to be configured to be in a nicer range probably
-        electionTimeout = (long) (Math.random() + 1) * 200 + 500;
+        electionTimeout = (long) (Math.random() + 1) * 300 + 500;
     }
 
     @Override
