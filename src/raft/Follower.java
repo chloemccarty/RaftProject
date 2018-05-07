@@ -80,7 +80,7 @@ public class Follower extends Node {
             }
         }
 
-        if (!heartbeat) {
+        if (!heartbeat && log.size() > 0) {
             //  build a response message to leader
             AppendEntries.Response.Builder builder = AppendEntries.Response.newBuilder();
             builder.setTerm(this.term);
