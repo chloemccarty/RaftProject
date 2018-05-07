@@ -80,7 +80,8 @@ public class Leader extends Node {
             entryBuilder.setMessage(message.clientCmd.cmd);
             AppendEntries.AppendEntriesMessage.Entry entry = entryBuilder.build();
 
-            builder.setEntries(this.log.size(), entry);
+
+            builder.setEntries(0, entry);
 
             AppendEntries.AppendEntriesMessage mes = builder.build();
 
